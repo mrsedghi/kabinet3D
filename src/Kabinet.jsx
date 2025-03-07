@@ -10,8 +10,8 @@ import Model from "./Model";
 import { useControls } from "leva";
 
 function Kabinet() {
-  const { scale } = useControls({
-    scale: { value: 1, min: 1, max: 2, step: 0.1 },
+  const { ModelScale } = useControls({
+    ModelScale: { value: 1, min: 1, max: 2, step: 0.1 },
   });
   return (
     <Canvas
@@ -20,7 +20,7 @@ function Kabinet() {
       camera={{ position: [0, 0, 15], fov: 25 }}
     >
       <color attach="background" args={["#15151a"]} />
-      <Model rotation={[0, 0, 0]} position={[-10, -3, -5]} scale={scale} />
+      <Model rotation={[0, 1.5, 0]} position={[-2, -4, 5]} scale={ModelScale} />
       <hemisphereLight intensity={0.5} />
       <ContactShadows
         resolution={1024}
@@ -107,7 +107,9 @@ function Kabinet() {
       <OrbitControls
         enablePan={true}
         enableZoom={true}
-        minPolarAngle={Math.PI / 2.2}
+        minAzimuthAngle={Math.PI / 2.9} // Restrict horizontal rotation
+        maxAzimuthAngle={Math.PI / 1.8} // Restrict horizontal rotation
+        minPolarAngle={Math.PI / 2.6}
         maxPolarAngle={Math.PI / 2.2}
       />
     </Canvas>
