@@ -43,6 +43,7 @@ export default function Model(props) {
   });
 
   // Convert RGB colors to THREE.Color and update materials, scales, and positions
+
   useMemo(() => {
     const objectIndices = [4, 5, 6, 7, 8]; // Indices of the objects to update
 
@@ -53,6 +54,7 @@ export default function Model(props) {
     }, 0);
 
     // Normalize scales to ensure they sum up to the target total scale
+    let lastItemEnd = initialPositions[0];
     objectIndices.forEach((index, i) => {
       const colorKey = `color${index}`; // e.g., "color4", "color5", etc.
       const scaleKey = `scaleX${index}`; // e.g., "scaleX4", "scaleX5", etc.
@@ -70,12 +72,12 @@ export default function Model(props) {
       // Update object scale
       const normalizedScale =
         (controls[scaleKey] / totalScale) * targetTotalScale;
-      nodes.Scene.children[index].scale.x = normalizedScale;
 
       // Update object position
-      const objectWidth = normalizedScale; // Assume object width is proportional to scale
-      nodes.Scene.children[index].position.x =
-        initialPositions[i] + (normalizedScale - initialScales[i]) / 2;
+      const objectWidth = 3.119999885559082 * normalizedScale; // Assume object width is proportional to scale
+      nodes.Scene.children[index].position.x = lastItemEnd;
+      nodes.Scene.children[index].scale.x = normalizedScale; // initialPositions[i] + (normalizedScale - initialScales[i]) / 2;
+      lastItemEnd += objectWidth;
     });
   }, [controls, nodes]);
 
