@@ -12,5 +12,8 @@ body,
 }
 
 body {
-  background: #f0f0f0;
+  background: #fff;
+}
+.bg {
+  background: #fff;
 }

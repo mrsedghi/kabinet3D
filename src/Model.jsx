@@ -4,7 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import { useControls, folder } from "leva";
 
 export default function Model(props) {
-  const { scene, nodes } = useGLTF("/kabinet.glb");
+  const { scene, nodes } = useGLTF("/Laundry.glb");
 
   // Define target total scale and initial percentages
   const initialPercentages = [0.35, 0.35, 0.1, 0.1, 0.1]; // 35% for Kabinet_1 and Kabinet_2, 10% for others
