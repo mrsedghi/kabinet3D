@@ -47,7 +47,7 @@ function Kabinet() {
 
       <ModelLaundry
         rotation={[0, -1.6, 0]}
-        position={[0, -1.2, 0]}
+        position={[0, -1.155, 0]}
         scale={1.5}
       />
 

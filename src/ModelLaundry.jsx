@@ -215,127 +215,119 @@ useEffect(() => {
   });
 
   // Apply bulkHead adjustments
-  if (nodes["3DGeom-4"]) {
-    nodes["3DGeom-4"].scale.y = bulkHead / 300;
-    nodes["3DGeom-5"].scale.x = bulkHead / 300;
-  }
+  nodes["3DGeom-3"].scale.x = bulkHead / 300
+  nodes["3DGeom-4"].scale.y = bulkHead / 300
+  nodes["3DGeom-5"].scale.y=bulkHead/300
 
-  // baseHeight adjustments
-  if (nodes["3DGeom-6"]) {
-    nodes["3DGeom-7"].scale.z = baseHeight / 730;
-    nodes["3DGeom-6"].scale.z = baseHeight / 730;
-    nodes["3DGeom-3"].scale.y = baseHeight / 730;
-    nodes["3DGeom-15"].position.y = (baseHeight - 730) / 26;
 
-    // baseDepth adjustments
-    nodes["3DGeom-14"].scale.x = baseDepth / 580;
-    nodes["3DGeom-10"].scale.z = baseDepth / 580;
-    nodes["3DGeom-3"].scale.z = baseDepth / 580;
-    nodes["3DGeom-15"].scale.z = baseDepth / 580;
-    nodes["3DGeom-6"].scale.x = baseDepth / 580;
-    nodes["3DGeom-7"].scale.x = baseDepth / 580;
-  }
+  // Apply baseHeight adjustments
+  nodes["3DGeom-10"].scale.z =  baseHeight/730;
+  nodes["3DGeom-11"].scale.z = baseHeight/730;
+  nodes["3DGeom-13"].position.y +=  (baseHeight-730)/25;
+  nodes["3DGeom-12"].position.y += (baseHeight - 730) / 25;
+ 
 
-  // Apply topHeight and topDepth adjustments
-  if (nodes["3DGeom-9"]) {
-    nodes["3DGeom-9"].scale.z = topHeight / 730;
-    nodes["3DGeom-9"].scale.y = topDepth / 320;
-    nodes["3DGeom-8"].scale.z = topHeight / 730;
-    nodes["3DGeom-8"].scale.y = topDepth / 320;
-    nodes["3DGeom-4"].scale.z = topHeight / 730;
-  }
-
-  // tallHeight adjustments
-  if (nodes["3DGeom-1"]) {
-    const tallHeightScale = tallHeight / 2200;
-    const tallHeightOffset = (tallHeight - 2200) / 25;
-
-    nodes["3DGeom-1"].scale.z = tallHeightScale;
-    nodes["3DGeom-2"].scale.y = tallHeightScale;
-    nodes["3DGeom-16"].scale.z = tallHeightScale;
-
-    nodes["3DGeom-4"].position.y += tallHeightOffset;
-    nodes["3DGeom-5"].position.x += tallHeightOffset;
-    nodes["3DGeom-9"].position.y -= tallHeightOffset;
-    nodes["3DGeom-8"].position.y -= tallHeightOffset;
-
-    // tallDepth adjustments
-    nodes["3DGeom-1"].scale.x = tallDepth / 600;
-    nodes["3DGeom-2"].scale.z = tallDepth / 600;
-    nodes["3DGeom-5"].scale.z = tallDepth / 600;
-    nodes["3DGeom-12"].scale.z = tallDepth / 600;
-    nodes["3DGeom-16"].scale.x = tallDepth / 600;
-    nodes["3DGeom-11"].scale.x = tallDepth / 600;
-    nodes["3DGeom-13"].scale.z = tallDepth / 600;
-    nodes["3DGeom-12"].scale.x = tallDepth / 600;
-  }
-
-  // Apply kicker adjustments
-  if (nodes["Assembly-21"]) {
-    const kickerScale = (kicker / 140) * 25;
-    const kickerOffset = (kicker - 140) / 25;
-
-    nodes["Assembly-21"].children[7].scale.z = kickerScale;
-
-    nodes["3DGeom-1"].position.z -= kickerOffset;
-    nodes["3DGeom-2"].position.y += kickerOffset;
-    nodes["3DGeom-3"].position.y += kickerOffset;
-    nodes["3DGeom-4"].position.y += kickerOffset;
-    nodes["3DGeom-5"].position.x += kickerOffset;
-    nodes["3DGeom-6"].position.z += kickerOffset;
-    nodes["3DGeom-7"].position.z += kickerOffset;
-    nodes["3DGeom-8"].position.y -= kickerOffset;
-    nodes["3DGeom-9"].position.y -= kickerOffset;
-    nodes["3DGeom-15"].position.y += kickerOffset;
-    nodes["3DGeom-16"].position.z += kickerOffset;
-  }
-
-  // Apply allwidth adjustments
-  if (nodes["Assembly-21"]) {
-    nodes["Assembly-21"].scale.y = allwidth / 2400000;
-  }
-
-  // Apply topTwo adjustments
-  if (nodes["3DGeom-8"]) {
-    nodes["3DGeom-8"].scale.x = topTwo / 700;
-    nodes["Assembly-21"].children[4].children[0].scale.x = (topTwo + 700) / 1400;
-  }
-
-  // Apply baseTwo adjustments
-  if (nodes["3DGeom-7"]) {
-    nodes["3DGeom-7"].scale.y = baseTwo / 600;
-    nodes["Assembly-21"].children[8].scale.x = ((baseTwo + 800) / 1400)*25.400;
-    nodes["Assembly-21"].children[7].children[2].scale.y = (baseTwo + 800) / 1400;
-    nodes["3DGeom-3"].position.x += (baseTwo - 600) / 26;
-    nodes["3DGeom-10"].position.x += (baseTwo - 600) / 26;
-  }
-
-  // Apply tallWidth adjustments
-  if (nodes["3DGeom-1"]) {
-    nodes["3DGeom-1"].scale.y = tallWidth / 930;
-    nodes["3DGeom-5"].scale.y = tallWidth / 930;
-    nodes["3DGeom-11"].scale.y = tallWidth / 930;
-    nodes["3DGeom-16"].position.y -= (tallWidth - 930) / 26;
-    nodes["3DGeom-12"].position.x -= (tallWidth - 930) / 26;
-  }
-
-  // Apply topOne adjustments
-  if (nodes["3DGeom-9"]) {
-    nodes["3DGeom-9"].scale.x = topOne / 700;
-    nodes["3DGeom-8"].position.x += (topOne - 700) / 25;
-    nodes["3DGeom-4"].scale.x = (topOne + 700) / 1400;
-  }
+    // Apply baseDepth adjustments
+  nodes["Assembly-22"].children[7].scale.x=baseDepth/22.85
+  
 
   // Apply baseOne adjustments 
-  if (nodes["3DGeom-6"]) {
-    nodes["3DGeom-6"].scale.y = baseOne / 800;
-    nodes["3DGeom-15"].scale.x = (baseOne + 600) / 1400;
-    nodes["3DGeom-14"].scale.y = (baseOne + 600) / 1400;
-    nodes["3DGeom-7"].position.y += (baseOne - 800) / 25;
-    nodes["3DGeom-3"].position.x += (baseOne - 800) / 25;
-    nodes["3DGeom-10"].position.x += (baseOne - 800) / 25;
+  nodes["3DGeom-10"].scale.y = baseOne / 800
+  nodes["3DGeom-13"].scale.x = baseOne / 800
+  nodes["3DGeom-16"].scale.y = baseOne / 800
+  nodes["3DGeom-11"].position.y += (baseOne - 800)/25.4
+  nodes["3DGeom-12"].position.x += (baseOne - 800)/25.4
+  nodes["3DGeom-14"].position.y += (baseOne - 800)/25.4
+  nodes["3DGeom-15"].position.y += (baseOne - 800)/25.4
+
+
+
+  // Apply baseTwo adjustments
+  nodes["3DGeom-11"].scale.y =baseTwo / 600
+  nodes["3DGeom-12"].scale.x =baseTwo / 600
+  nodes["3DGeom-15"].scale.y =baseTwo / 600
+  nodes["3DGeom-14"].position.y += (baseTwo - 600)/25.4
+
+
+  // Apply topHeight adjustments
+  nodes["3DGeom-6"].scale.y=topHeight/730
+  nodes["3DGeom-7"].scale.y=topHeight/730
+  
+
+  // Apply topDepth adjustments
+  nodes["Assembly-22"].children[4].scale.x = topDepth / 12.59
+  nodes["3DGeom-4"].scale.z = topDepth / 320
+  nodes["3DGeom-5"].scale.z = topDepth / 320
+
+  // Apply topOne adjustments
+  nodes["3DGeom-7"].scale.x = topOne / 700
+  nodes["3DGeom-5"].scale.x = topOne / 700
+  nodes["3DGeom-4"].position.x += (topOne - 700)/25.4
+  nodes["3DGeom-6"].position.x += (topOne - 700)/25.4
+
+  // Apply topTwo adjustments
+  nodes["3DGeom-4"].scale.x = topTwo / 700
+  nodes["3DGeom-6"].scale.x = topTwo / 700
+
+
+  
+  // Apply tallHeight adjustments
+  const tallHeightOffset = (tallHeight - 2200) / 25.4;
+  nodes["3DGeom-1"].scale.z = tallHeight / 2200
+  nodes["3DGeom-3"].position.x += tallHeightOffset;
+  nodes["3DGeom-4"].position.y += tallHeightOffset;
+  nodes["3DGeom-5"].position.y += tallHeightOffset;
+  nodes["3DGeom-6"].position.y -= tallHeightOffset;
+  nodes["3DGeom-7"].position.y -= tallHeightOffset;
+
+
+// Apply tallDepth adjustments
+  nodes["3DGeom-1"].scale.x = tallDepth / 600
+  nodes["3DGeom-2"].scale.x = tallDepth / 600
+  nodes["3DGeom-3"].scale.z = tallDepth / 600
+  nodes["3DGeom-8"].scale.x = tallDepth / 600
+  nodes["3DGeom-9"].scale.z = tallDepth / 600
+ 
+
+   // Apply tallWidth adjustments
+  nodes["3DGeom-1"].scale.y = (tallWidth-30) / 900
+  nodes["3DGeom-3"].scale.y = tallWidth / 930
+  nodes["3DGeom-9"].scale.y = (tallWidth-30) / 900
+  nodes["3DGeom-8"].position.y -= (tallWidth-930) / 25.4
+
+  // Apply kicker adjustments
+  const kickerOffset = (kicker - 140) / 25.4;
+  nodes["3DGeom-9"].scale.x = kicker / 140
+  nodes["3DGeom-15"].scale.z = kicker / 140
+  nodes["3DGeom-16"].scale.z = kicker / 140
+  nodes["3DGeom-1"].position.z -= kickerOffset;
+  nodes["3DGeom-3"].position.x += kickerOffset;
+  nodes["3DGeom-4"].position.y += kickerOffset;
+  nodes["3DGeom-5"].position.y += kickerOffset;
+  nodes["3DGeom-6"].position.y -= kickerOffset;
+  nodes["3DGeom-7"].position.y -= kickerOffset;
+  nodes["3DGeom-10"].position.z += kickerOffset;
+  nodes["3DGeom-11"].position.z += kickerOffset;
+  nodes["3DGeom-12"].position.y += kickerOffset;
+  nodes["3DGeom-13"].position.y += kickerOffset;
+
+
+  // Apply allwidth adjustments
+  if (nodes["Assembly-22"]) {
+    nodes["Assembly-22"].scale.y = allwidth / 2400000;
   }
 
+ // Combined adjustments for nodes that were being modified in multiple places
+ const combinedScaleZ = (tallHeight + kicker) / 2340;
+ nodes["3DGeom-2"].scale.z = combinedScaleZ;
+ nodes["3DGeom-8"].scale.z = combinedScaleZ;
+ 
+ // Combined x-scale for 3DGeom-8 (tallDepth)
+ nodes["3DGeom-2"].scale.x = tallDepth / 600;
+ nodes["3DGeom-8"].scale.x = tallDepth / 600;
+
+ // Combined scale for 3DGeom-14 (baseHeight and kicker)
+ nodes["3DGeom-14"].scale.x = (baseHeight + kicker) / 870;
 
 }, [
   bulkHead,
