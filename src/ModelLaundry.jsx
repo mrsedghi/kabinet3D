@@ -89,12 +89,18 @@ export default function ModelLaundry(props) {
   // Improved click handler
   useEffect(() => {
     const handleClick = (event) => {
+      // Only handle clicks directly on the canvas
+      if (event.target !== gl.domElement) return;
+      
       event.stopPropagation();
       
-      // Get mouse position in normalized device coordinates
+      const canvas = gl.domElement;
+      const rect = canvas.getBoundingClientRect();
+      
+      // Calculate mouse position in normalized device coordinates
       const mouse = new THREE.Vector2();
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       
       // Set up raycaster
       const raycaster = new THREE.Raycaster();
@@ -104,7 +110,7 @@ export default function ModelLaundry(props) {
       const intersects = raycaster.intersectObjects(scene.children, true);
       
       if (intersects.length > 0) {
-        // Find the first object that has a name matching our nodes
+        // Find the first object that has a name
         let clickedObject = intersects[0].object;
         
         // Traverse up the parent chain to find a named object
@@ -125,9 +131,9 @@ export default function ModelLaundry(props) {
           
           if (nodeName) {
             setSelectedNode(nodeName);
-            console.log("Selected node:", nodeName);
+            console.log("Selected node:", nodeName, clickedObject);
           } else {
-            console.log("Clicked object not in nodes:", clickedObject.name);
+            console.log("Clicked object not in nodes:", clickedObject.name, clickedObject);
           }
         }
       }
