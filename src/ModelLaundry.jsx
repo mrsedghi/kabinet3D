@@ -1,15 +1,19 @@
-import { useGLTF, Text, useTexture } from "@react-three/drei";
-import { useControls } from "leva";
+import { useGLTF, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { data } from "./data";
 
-export default function ModelLaundry(props) {
+export default function ModelLaundry({
+  selectedGroup,
+  setSelectedGroup,
+  params,
+  ...props
+}) {
   const { scene, nodes, materials } = useGLTF(data.glbUrl);
   const { gl, camera } = useThree();
-  const [selectedGroup, setSelectedGroup] = useState(null);
   const textureConfigs = data.textureConfig;
+
   // Create outline material for borders
   const [outlineMaterial] = useState(
     () =>
@@ -28,19 +32,15 @@ export default function ModelLaundry(props) {
   // Reference to store outline meshes
   const outlineMeshes = useRef([]);
 
-  // Central state for all parameters
-
-  const [params, setParams] = useState(data.varibles);
-
-  // Define node groups with controls as an array
-  const nodeGroups = useRef(data.nodesData);
-
   // Store initial positions and materials
   const initialData = useRef({});
   const positionStabilizer = useRef({
     lastActiveTime: Date.now(),
     needsReset: false,
   });
+
+  // Define node groups with controls
+  const nodeGroups = useRef(data.nodesData);
 
   // Track tab visibility changes
   useEffect(() => {
@@ -77,18 +77,32 @@ export default function ModelLaundry(props) {
     }
   }, [nodes]);
 
-  function useTextures(texturePaths) {
-    return texturePaths.map((path) => useTexture(path));
-  }
-  const texturePaths = data.textures;
-  const textures = useTextures(texturePaths);
-  const textureMap = textures.reduce((acc, texture, index) => {
-    acc[`Texture ${index + 1}`] = texture;
-    return acc;
-  }, {});
+  // Load all textures from data
+  const textureMap = useRef({});
+
+  useEffect(() => {
+    const loadTextures = async () => {
+      const texturePaths = data.textures || [];
+      const loadedTextures = {};
+
+      for (let i = 0; i < texturePaths.length; i++) {
+        const texture = await new THREE.TextureLoader().loadAsync(
+          texturePaths[i]
+        );
+        loadedTextures[`Texture ${i + 1}`] = texture;
+      }
+
+      textureMap.current = loadedTextures;
+
+      // After loading textures, update materials
+      updateMaterials();
+    };
+
+    loadTextures();
+  }, []);
 
   // Update material textures with dynamic scaling
-  useEffect(() => {
+  const updateMaterials = () => {
     const calculateDynamicRepeat = (
       nodeName,
       baseWidth,
@@ -105,7 +119,7 @@ export default function ModelLaundry(props) {
     };
 
     const updateMaterialTexture = (material, texture, repeatX, repeatY) => {
-      if (material instanceof THREE.MeshStandardMaterial) {
+      if (material instanceof THREE.MeshStandardMaterial && texture) {
         const newTexture = texture.clone();
         newTexture.wrapS = THREE.MirroredRepeatWrapping;
         newTexture.wrapT = THREE.MirroredRepeatWrapping;
@@ -125,7 +139,11 @@ export default function ModelLaundry(props) {
         // Find matching config or use default
         const matchedConfig = textureConfigs.find((config) =>
           groupData.name.includes(config.pattern)
-        );
+        ) || {
+          textureParam: "defaultTexture",
+          repeatX: 0.5,
+          repeatY: 0.5,
+        };
 
         // Calculate repeat values if not using default
         const repeat = matchedConfig.nodeName
@@ -138,57 +156,26 @@ export default function ModelLaundry(props) {
             )
           : { x: matchedConfig.repeatX, y: matchedConfig.repeatY };
 
-        const selectedTexture = textureMap[params[matchedConfig.textureParam]];
-        updateMaterialTexture(
-          materials[groupData.material],
-          selectedTexture,
-          repeat.x,
-          repeat.y
-        );
+        const selectedTexture =
+          textureMap.current[params[matchedConfig.textureParam]];
+        if (selectedTexture) {
+          updateMaterialTexture(
+            materials[groupData.material],
+            selectedTexture,
+            repeat.x,
+            repeat.y
+          );
+        }
       }
     });
-  }, [materials, textureMap, nodes, textureConfigs, params]);
-
-  // Add border settings to global controls
-  useControls("Global Settings", {
-    allwidth: {
-      value: params.allwidth,
-      min: 1500,
-      max: 4000,
-      step: 100,
-      label: "All Width",
-      onChange: (v) => setParams((p) => ({ ...p, allwidth: v })),
-    },
-  });
-
-  // Group-specific controls
-  useControls(
-    "Group Controls",
-    () => {
-      if (!selectedGroup) return {};
-      const group = nodeGroups.current.find((g) => g.name === selectedGroup);
-      if (!group) return {};
-
-      const controls = {};
-
-      Object.entries(group.controls).forEach(([key, config]) => {
-        controls[key] = {
-          ...config,
-          value: params[key],
-          onChange: (v) => setParams((p) => ({ ...p, [key]: v })),
-        };
-      });
-
-      return controls;
-    },
-    [selectedGroup, params]
-  );
-
-  // Transformation helpers
-  const roundTo = (value, precision = 0) => {
-    const multiplier = 10 ** precision;
-    return Math.round(value * multiplier) / multiplier;
   };
+
+  // Update materials when params change
+  useEffect(() => {
+    if (Object.keys(textureMap.current).length > 0) {
+      updateMaterials();
+    }
+  }, [params, materials]);
 
   // Main transformation logic
   useFrame(() => {
@@ -261,6 +248,12 @@ export default function ModelLaundry(props) {
     });
   });
 
+  // Helper function for rounding values
+  const roundTo = (value, precision = 0) => {
+    const multiplier = 10 ** precision;
+    return Math.round(value * multiplier) / multiplier;
+  };
+
   // Secondary useFrame for updating outline meshes
   useFrame(() => {
     if (selectedGroup && outlineMeshes.current.length > 0) {
@@ -269,9 +262,9 @@ export default function ModelLaundry(props) {
           item.outline.position.copy(item.original.position);
           item.outline.rotation.copy(item.original.rotation);
           item.outline.scale.set(
-            item.original.scale.x * (1 + params.borderThickness),
-            item.original.scale.y * (1 + params.borderThickness),
-            item.original.scale.z * (1 + params.borderThickness)
+            item.original.scale.x * (1 + (params.borderThickness || 0.05)),
+            item.original.scale.y * (1 + (params.borderThickness || 0.05)),
+            item.original.scale.z * (1 + (params.borderThickness || 0.05))
           );
         }
       });
@@ -289,7 +282,7 @@ export default function ModelLaundry(props) {
 
     if (!selectedGroup) return;
 
-    outlineMaterial.color.set(params.borderColor);
+    outlineMaterial.color.set(params.borderColor || "#ff0000");
 
     const group = nodeGroups.current.find((g) => g.name === selectedGroup);
     if (!group) return;
@@ -306,9 +299,9 @@ export default function ModelLaundry(props) {
       outlineMesh.position.copy(originalMesh.position);
       outlineMesh.rotation.copy(originalMesh.rotation);
       outlineMesh.scale.set(
-        originalMesh.scale.x * (1 + params.borderThickness),
-        originalMesh.scale.y * (1 + params.borderThickness),
-        originalMesh.scale.z * (1 + params.borderThickness)
+        originalMesh.scale.x * (1 + (params.borderThickness || 0.05)),
+        originalMesh.scale.y * (1 + (params.borderThickness || 0.05)),
+        originalMesh.scale.z * (1 + (params.borderThickness || 0.05))
       );
 
       originalMesh.parent.add(outlineMesh);
@@ -375,7 +368,7 @@ export default function ModelLaundry(props) {
         for (const group of nodeGroups.current) {
           if (group.nodes.includes(nodeName)) {
             setSelectedGroup(group.name);
-            console.log(nodeName);
+            console.log("Selected node:", nodeName);
             return;
           }
         }
@@ -387,7 +380,7 @@ export default function ModelLaundry(props) {
     const canvas = gl.domElement;
     canvas.addEventListener("click", handleClick);
     return () => canvas.removeEventListener("click", handleClick);
-  }, [gl, camera, scene, nodes]);
+  }, [gl, camera, scene, nodes, setSelectedGroup]);
 
   return (
     <>
@@ -401,7 +394,8 @@ export default function ModelLaundry(props) {
           anchorY="middle"
         >
           {`Selected: ${
-            nodeGroups.current.find((g) => g.name === selectedGroup)?.label
+            nodeGroups.current.find((g) => g.name === selectedGroup)?.label ||
+            selectedGroup
           }`}
         </Text>
       )}
