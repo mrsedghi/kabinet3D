@@ -6,10 +6,11 @@ import {
   useHelper,
   RandomizedLight,
 } from "@react-three/drei";
-import ModelLaundry from "./ModelLaundry";
+import ModelLaundry from "./ModelLaundry1";
 import * as THREE from "three";
+import ModelLaundry1 from "./ModelLaundry1";
 
-function Kabinet() {
+function Kabinet1() {
   return (
     <Canvas
       gl={{
@@ -55,8 +56,8 @@ function Kabinet() {
       />
       <directionalLight position={[0, -5, 0]} intensity={0.3} color="#ffffff" />
 
-      <ModelLaundry
-        rotation={[0, -1.6, 0]}
+      <ModelLaundry1
+        rotation={[0, 0, 0]}
         position={[0, -1.155, 0]}
         scale={1.5}
       />
@@ -91,4 +92,4 @@ function Kabinet() {
   );
 }
 
-export default Kabinet;
+export default Kabinet1;

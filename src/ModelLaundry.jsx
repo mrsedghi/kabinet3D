@@ -2,366 +2,397 @@ import { useGLTF, Text, useTexture } from "@react-three/drei";
 import { useControls } from "leva";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
+import { data } from "./data";
 
 export default function ModelLaundry(props) {
-  const { scene, nodes, materials } = useGLTF("/Laundry.glb");
+  const { scene, nodes, materials } = useGLTF(data.glbUrl);
   const { gl, camera } = useThree();
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [highlightMaterial] = useState(() => 
-    new THREE.MeshStandardMaterial({ 
-      color: 0xff0000,
-      emissive: 0x444444,
-      roughness: 0.5,
-      metalness: 0.5 
-    })
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const textureConfigs = data.textureConfig;
+  // Create outline material for borders
+  const [outlineMaterial] = useState(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        side: THREE.BackSide,
+        transparent: true,
+        opacity: 0.2,
+        depthTest: false,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+      })
   );
-  
-  // Store initial positions, scales and materials of nodes
+
+  // Reference to store outline meshes
+  const outlineMeshes = useRef([]);
+
+  // Central state for all parameters
+
+  const [params, setParams] = useState(data.varibles);
+
+  // Define node groups with controls as an array
+  const nodeGroups = useRef(data.nodesData);
+
+  // Store initial positions and materials
   const initialData = useRef({});
-  
+  const positionStabilizer = useRef({
+    lastActiveTime: Date.now(),
+    needsReset: false,
+  });
+
+  // Track tab visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        const inactiveDuration =
+          Date.now() - positionStabilizer.current.lastActiveTime;
+        if (inactiveDuration > 60000) {
+          positionStabilizer.current.needsReset = true;
+        }
+      } else {
+        positionStabilizer.current.lastActiveTime = Date.now();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  // Initialize node data
   useEffect(() => {
     if (nodes) {
       initialData.current = {};
       Object.keys(nodes).forEach((key) => {
-        initialData.current[key] = {
-          position: nodes[key].position?.clone(),
-          scale: nodes[key].scale?.clone(),
-          material: nodes[key].material
-        };
+        if (nodes[key].position) {
+          initialData.current[key] = {
+            position: nodes[key].position.clone(),
+            scale: nodes[key].scale?.clone(),
+            material: nodes[key].material,
+          };
+        }
       });
     }
   }, [nodes]);
 
-  // Load JPG textures
-  const texture1 = useTexture("/textures/material1.jpg");
-  const texture2 = useTexture("/textures/material2.jpg");
-  const texture3 = useTexture("/textures/material3.jpg");
-  const texture4 = useTexture("/textures/material4.jpg");
+  function useTextures(texturePaths) {
+    return texturePaths.map((path) => useTexture(path));
+  }
+  const texturePaths = data.textures;
+  const textures = useTextures(texturePaths);
+  const textureMap = textures.reduce((acc, texture, index) => {
+    acc[`Texture ${index + 1}`] = texture;
+    return acc;
+  }, {});
 
-  // Add texture selection to Leva
-  const { baseTexture, topTexture } = useControls({
-    baseTexture: {
-      value: "Texture 1",
-      options: ["Texture 1", "Texture 2", "Texture 3", "Texture 4"],
-      label: "Base Texture",
-    },
-    topTexture: {
-      value: "Texture 1",
-      options: ["Texture 1", "Texture 2", "Texture 3", "Texture 4"],
-      label: "Top Texture",
-    },
-  });
-
-  // Map texture names to loaded textures
-  const textureMap = {
-    "Texture 1": texture1,
-    "Texture 2": texture2,
-    "Texture 3": texture3,
-    "Texture 4": texture4,
-  };
-
-  // Function to update material textures
-  const updateMaterialTexture = (material, texture) => {
-    if (material instanceof THREE.MeshStandardMaterial) {
-      const newTexture = texture.clone();
-      newTexture.needsUpdate = true;
-      newTexture.wrapS = THREE.RepeatWrapping;
-      newTexture.wrapT = THREE.RepeatWrapping;
-      newTexture.repeat.set(0.5, 0.5);
-      material.map = newTexture;
-      material.needsUpdate = true;
-    }
-  };
-
-  // Update materials when texture selection changes
+  // Update material textures with dynamic scaling
   useEffect(() => {
-    if (materials["*3"]) {
-      const selectedTextureBase = textureMap[baseTexture];
-      updateMaterialTexture(materials["*3"], selectedTextureBase);
-    }
-    if (materials["*5"]) {
-      const selectedTextureTop = textureMap[topTexture];
-      updateMaterialTexture(materials["*5"], selectedTextureTop);
-    }
-  }, [baseTexture, topTexture, materials, textureMap]);
+    const calculateDynamicRepeat = (
+      nodeName,
+      baseWidth,
+      maxWidth,
+      baseHeight,
+      maxHeight
+    ) => {
+      if (!nodes[nodeName]) return { x: 0.5, y: 0.5 };
 
-  // Improved click handler
-  useEffect(() => {
-    const handleClick = (event) => {
-      // Only handle clicks directly on the canvas
-      if (event.target !== gl.domElement) return;
-      
-      event.stopPropagation();
-      
-      const canvas = gl.domElement;
-      const rect = canvas.getBoundingClientRect();
-      
-      // Calculate mouse position in normalized device coordinates
-      const mouse = new THREE.Vector2();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      // Set up raycaster
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, camera);
-      
-      // Find all intersected objects
-      const intersects = raycaster.intersectObjects(scene.children, true);
-      
-      if (intersects.length > 0) {
-        // Find the first object that has a name
-        let clickedObject = intersects[0].object;
-        
-        // Traverse up the parent chain to find a named object
-        while (clickedObject && !clickedObject.name && clickedObject.parent) {
-          clickedObject = clickedObject.parent;
-        }
-        
-        if (clickedObject && clickedObject.name) {
-          // Check if this is one of our known nodes
-          const nodeName = Object.keys(nodes).find(key => {
-            const node = nodes[key];
-            return (
-              node === clickedObject || 
-              node.uuid === clickedObject.uuid ||
-              (node.isObject3D && node.children.includes(clickedObject))
-            );
-          });
-          
-          if (nodeName) {
-            setSelectedNode(nodeName);
-            console.log("Selected node:", nodeName, clickedObject);
-          } else {
-            console.log("Clicked object not in nodes:", clickedObject.name, clickedObject);
-          }
-        }
+      return {
+        x: (nodes[nodeName].scale["x"] * baseWidth) / maxWidth,
+        y: (nodes[nodeName].scale["z"] * baseHeight) / maxHeight,
+      };
+    };
+
+    const updateMaterialTexture = (material, texture, repeatX, repeatY) => {
+      if (material instanceof THREE.MeshStandardMaterial) {
+        const newTexture = texture.clone();
+        newTexture.wrapS = THREE.MirroredRepeatWrapping;
+        newTexture.wrapT = THREE.MirroredRepeatWrapping;
+        newTexture.repeat.set(repeatX, repeatY);
+        material.map = newTexture;
+        material.needsUpdate = true;
+        material.metalness = 0.2;
+        material.roughness = 0.2;
+        material.envMapIntensity = 0.8;
+        material.clearcoat = 0.8;
+        material.clearcoatRoughness = 0.2;
       }
     };
 
-    const canvas = gl.domElement;
-    canvas.addEventListener('click', handleClick);
-    return () => canvas.removeEventListener('click', handleClick);
-  }, [gl, camera, scene, nodes]);
+    nodeGroups.current.forEach((groupData) => {
+      if (groupData.material && materials[groupData.material]) {
+        // Find matching config or use default
+        const matchedConfig = textureConfigs.find((config) =>
+          groupData.name.includes(config.pattern)
+        );
 
-  // Highlight selected node
-  useEffect(() => {
-    if (!nodes) return;
+        // Calculate repeat values if not using default
+        const repeat = matchedConfig.nodeName
+          ? calculateDynamicRepeat(
+              matchedConfig.nodeName,
+              matchedConfig.baseWidth,
+              matchedConfig.maxWidth,
+              matchedConfig.baseHeight,
+              matchedConfig.maxHeight
+            )
+          : { x: matchedConfig.repeatX, y: matchedConfig.repeatY };
 
-    // Reset all materials to original
-    Object.keys(nodes).forEach(key => {
+        const selectedTexture = textureMap[params[matchedConfig.textureParam]];
+        updateMaterialTexture(
+          materials[groupData.material],
+          selectedTexture,
+          repeat.x,
+          repeat.y
+        );
+      }
+    });
+  }, [materials, textureMap, nodes, textureConfigs, params]);
+
+  // Add border settings to global controls
+  useControls("Global Settings", {
+    allwidth: {
+      value: params.allwidth,
+      min: 1500,
+      max: 4000,
+      step: 100,
+      label: "All Width",
+      onChange: (v) => setParams((p) => ({ ...p, allwidth: v })),
+    },
+  });
+
+  // Group-specific controls
+  useControls(
+    "Group Controls",
+    () => {
+      if (!selectedGroup) return {};
+      const group = nodeGroups.current.find((g) => g.name === selectedGroup);
+      if (!group) return {};
+
+      const controls = {};
+
+      Object.entries(group.controls).forEach(([key, config]) => {
+        controls[key] = {
+          ...config,
+          value: params[key],
+          onChange: (v) => setParams((p) => ({ ...p, [key]: v })),
+        };
+      });
+
+      return controls;
+    },
+    [selectedGroup, params]
+  );
+
+  // Transformation helpers
+  const roundTo = (value, precision = 0) => {
+    const multiplier = 10 ** precision;
+    return Math.round(value * multiplier) / multiplier;
+  };
+
+  // Main transformation logic
+  useFrame(() => {
+    if (!nodes || !initialData.current) return;
+
+    // Reset if needed after tab inactivity
+    if (positionStabilizer.current.needsReset) {
+      Object.keys(nodes).forEach((key) => {
+        const node = nodes[key];
+        const initial = initialData.current[key];
+        if (node && initial?.position) node.position.copy(initial.position);
+      });
+      positionStabilizer.current.needsReset = false;
+      return;
+    }
+
+    // Reset all nodes first
+    Object.keys(nodes).forEach((key) => {
       const node = nodes[key];
-      if (node && node.material && initialData.current[key]?.material) {
-        node.material = initialData.current[key].material;
+      const initial = initialData.current[key];
+      if (node && initial) {
+        if (initial.position) node.position.copy(initial.position);
+        if (initial.scale) node.scale.copy(initial.scale);
       }
     });
 
-    // Highlight selected node if it exists
-    if (selectedNode && nodes[selectedNode]) {
-      const node = nodes[selectedNode];
-      
-      // Store original material if not already stored
-      if (node.material && !initialData.current[selectedNode]?.material) {
-        initialData.current[selectedNode] = {
-          ...initialData.current[selectedNode],
-          material: node.material
-        };
+    // Apply scale transformations
+    const applyScale = (nodeName, axis, value, baseValue) => {
+      if (nodes[nodeName]) {
+        nodes[nodeName].scale[axis] = roundTo(value / baseValue, 4);
       }
-      
-      node.material = highlightMaterial;
-    }
-  }, [selectedNode, nodes, highlightMaterial]);
+    };
 
-// Create controls for scaling and positioning
-const {
-  bulkHead,
-  baseHeight,
-  baseDepth,
-  topHeight,
-  topDepth,
-  tallHeight,
-  tallDepth,
-  kicker,
-  allwidth,
-  topTwo,
-  tallWidth,
-  baseTwo,
-  topOne,
-  baseOne,
-} = useControls({
-  allwidth: { value: 2400, min: 1500, max: 4000, step: 100, label: "all Width" },
-  bulkHead: { value: 300, min: 100, max: 500, step: 10, label: "BulkHead Height" },
-  baseHeight: { value: 730, min: 500, max: 1000, step: 10, label: "Base Height" },
-  baseDepth: { value: 580, min: 400, max: 800, step: 10, label: "Base Depth" },
-  baseOne: { value: 800, min: 500, max: 1000, step: 10, label: "Base One" },
-  baseTwo: { value: 600, min: 500, max: 1000, step: 10, label: "Base Two" },
-  topHeight: { value: 730, min: 500, max: 900, step: 10, label: "Top Height" },
-  topDepth: { value: 320, min: 200, max: 500, step: 10, label: "Top Depth" },
-  topOne: { value: 700, min: 500, max: 900, step: 10, label: "Top One" },
-  topTwo: { value: 700, min: 500, max: 900, step: 10, label: "Top Two" },
-  tallHeight: { value: 2200, min: 1700, max: 2500, step: 10, label: "Tall Height" },
-  tallDepth: { value: 600, min: 300, max: 700, step: 10, label: "Tall Depth" },
-  tallWidth: { value: 930, min: 500, max: 2000, step: 10, label: "Tall Width" },
-  kicker: { value: 140, min: 100, max: 300, step: 10, label: "Kicker" },
-});
+    data.nodesData.forEach((node) => {
+      if (node.scales) {
+        node.scales.forEach(
+          ({ node: nodeName, axis, param, value, baseValue }) => {
+            const scaleValue = value
+              ? typeof value === "function"
+                ? value(params)
+                : value
+              : params[param];
+            applyScale(nodeName, axis, scaleValue, baseValue);
+          }
+        );
+      }
+    });
 
-// Apply scales and positions
-useEffect(() => {
-  if (!nodes || !initialData.current) return;
+    // Position transformations
+    const applyPosition = (nodeName, axis, offset) => {
+      if (nodes[nodeName] && initialData.current[nodeName]?.position) {
+        nodes[nodeName].position[axis] = roundTo(
+          initialData.current[nodeName].position[axis] + offset,
+          2
+        );
+      }
+    };
 
-  // Reset nodes to initial state before applying new transformations
-  Object.keys(nodes).forEach((key) => {
-    const node = nodes[key];
-    const initial = initialData.current[key];
+    // Apply position transformations
+    data.nodesData.forEach((node) => {
+      if (node.positions) {
+        node.positions.forEach(({ node, axis, offsets }) => {
+          const totalOffset = offsets.reduce((sum, { param, baseValue }) => {
+            return sum + roundTo((params[param] - baseValue) / 25.4, 2);
+          }, 0);
 
-    if (node && initial) {
-      if (initial.position) node.position.copy(initial.position);
-      if (initial.scale) node.scale.copy(initial.scale);
+          applyPosition(node, axis, totalOffset);
+        });
+      }
+    });
+  });
+
+  // Secondary useFrame for updating outline meshes
+  useFrame(() => {
+    if (selectedGroup && outlineMeshes.current.length > 0) {
+      outlineMeshes.current.forEach((item) => {
+        if (item.outline && item.original) {
+          item.outline.position.copy(item.original.position);
+          item.outline.rotation.copy(item.original.rotation);
+          item.outline.scale.set(
+            item.original.scale.x * (1 + params.borderThickness),
+            item.original.scale.y * (1 + params.borderThickness),
+            item.original.scale.z * (1 + params.borderThickness)
+          );
+        }
+      });
     }
   });
 
-  // Apply bulkHead adjustments
-  nodes["3DGeom-3"].scale.x = bulkHead / 300
-  nodes["3DGeom-4"].scale.y = bulkHead / 300
-  nodes["3DGeom-5"].scale.y=bulkHead/300
+  // Outline mesh creation and cleanup
+  useEffect(() => {
+    outlineMeshes.current.forEach((item) => {
+      if (item.outline && item.outline.parent) {
+        item.outline.parent.remove(item.outline);
+      }
+    });
+    outlineMeshes.current = [];
 
+    if (!selectedGroup) return;
 
-  // Apply baseHeight adjustments
-  nodes["3DGeom-10"].scale.z =  baseHeight/730;
-  nodes["3DGeom-11"].scale.z = baseHeight/730;
-  nodes["3DGeom-13"].position.y +=  (baseHeight-730)/25;
-  nodes["3DGeom-12"].position.y += (baseHeight - 730) / 25;
- 
+    outlineMaterial.color.set(params.borderColor);
 
-    // Apply baseDepth adjustments
-  nodes["Assembly-22"].children[7].scale.x=baseDepth/22.85
-  
+    const group = nodeGroups.current.find((g) => g.name === selectedGroup);
+    if (!group) return;
 
-  // Apply baseOne adjustments 
-  nodes["3DGeom-10"].scale.y = baseOne / 800
-  nodes["3DGeom-13"].scale.x = baseOne / 800
-  nodes["3DGeom-16"].scale.y = baseOne / 800
-  nodes["3DGeom-11"].position.y += (baseOne - 800)/25.4
-  nodes["3DGeom-12"].position.x += (baseOne - 800)/25.4
-  nodes["3DGeom-14"].position.y += (baseOne - 800)/25.4
-  nodes["3DGeom-15"].position.y += (baseOne - 800)/25.4
+    group.nodes.forEach((nodeName) => {
+      if (!nodes[nodeName] || !nodes[nodeName].geometry) return;
 
+      const originalMesh = nodes[nodeName];
+      const outlineGeometry = originalMesh.geometry.clone();
 
+      const outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
+      outlineMesh.name = `outline-${nodeName}`;
 
-  // Apply baseTwo adjustments
-  nodes["3DGeom-11"].scale.y =baseTwo / 600
-  nodes["3DGeom-12"].scale.x =baseTwo / 600
-  nodes["3DGeom-15"].scale.y =baseTwo / 600
-  nodes["3DGeom-14"].position.y += (baseTwo - 600)/25.4
+      outlineMesh.position.copy(originalMesh.position);
+      outlineMesh.rotation.copy(originalMesh.rotation);
+      outlineMesh.scale.set(
+        originalMesh.scale.x * (1 + params.borderThickness),
+        originalMesh.scale.y * (1 + params.borderThickness),
+        originalMesh.scale.z * (1 + params.borderThickness)
+      );
 
+      originalMesh.parent.add(outlineMesh);
 
-  // Apply topHeight adjustments
-  nodes["3DGeom-6"].scale.y=topHeight/730
-  nodes["3DGeom-7"].scale.y=topHeight/730
-  
+      outlineMeshes.current.push({
+        outline: outlineMesh,
+        original: originalMesh,
+        nodeName: nodeName,
+      });
+    });
 
-  // Apply topDepth adjustments
-  nodes["Assembly-22"].children[4].scale.x = topDepth / 12.59
-  nodes["3DGeom-4"].scale.z = topDepth / 320
-  nodes["3DGeom-5"].scale.z = topDepth / 320
+    return () => {
+      outlineMeshes.current.forEach((item) => {
+        if (item.outline && item.outline.parent) {
+          item.outline.parent.remove(item.outline);
+        }
+      });
+      outlineMeshes.current = [];
+    };
+  }, [
+    selectedGroup,
+    params.borderColor,
+    nodes,
+    params.borderThickness,
+    outlineMaterial,
+  ]);
 
-  // Apply topOne adjustments
-  nodes["3DGeom-7"].scale.x = topOne / 700
-  nodes["3DGeom-5"].scale.x = topOne / 700
-  nodes["3DGeom-4"].position.x += (topOne - 700)/25.4
-  nodes["3DGeom-6"].position.x += (topOne - 700)/25.4
+  // Click handler for group selection
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (event.target !== gl.domElement) return;
+      event.stopPropagation();
 
-  // Apply topTwo adjustments
-  nodes["3DGeom-4"].scale.x = topTwo / 700
-  nodes["3DGeom-6"].scale.x = topTwo / 700
+      const canvas = gl.domElement;
+      const rect = canvas.getBoundingClientRect();
 
+      const mouse = new THREE.Vector2(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1
+      );
 
-  
-  // Apply tallHeight adjustments
-  const tallHeightOffset = (tallHeight - 2200) / 25.4;
-  nodes["3DGeom-1"].scale.z = tallHeight / 2200
-  nodes["3DGeom-3"].position.x += tallHeightOffset;
-  nodes["3DGeom-4"].position.y += tallHeightOffset;
-  nodes["3DGeom-5"].position.y += tallHeightOffset;
-  nodes["3DGeom-6"].position.y -= tallHeightOffset;
-  nodes["3DGeom-7"].position.y -= tallHeightOffset;
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
 
+      const nodeMeshes = Object.values(nodes).filter((node) => node.isMesh);
+      const intersects = raycaster.intersectObjects(nodeMeshes, true);
 
-// Apply tallDepth adjustments
-  nodes["3DGeom-1"].scale.x = tallDepth / 600
-  nodes["3DGeom-2"].scale.x = tallDepth / 600
-  nodes["3DGeom-3"].scale.z = tallDepth / 600
-  nodes["3DGeom-8"].scale.x = tallDepth / 600
-  nodes["3DGeom-9"].scale.z = tallDepth / 600
- 
+      if (intersects.length === 0) {
+        setSelectedGroup(null);
+        return;
+      }
 
-   // Apply tallWidth adjustments
-  nodes["3DGeom-1"].scale.y = (tallWidth-30) / 900
-  nodes["3DGeom-3"].scale.y = tallWidth / 930
-  nodes["3DGeom-9"].scale.y = (tallWidth-30) / 900
-  nodes["3DGeom-8"].position.y -= (tallWidth-930) / 25.4
+      const clickedNode = intersects[0].object;
+      const nodeName = Object.keys(nodes).find((key) => {
+        const node = nodes[key];
+        return (
+          node === clickedNode ||
+          node.uuid === clickedNode.uuid ||
+          (node.isObject3D && node.children.includes(clickedNode))
+        );
+      });
 
-  // Apply kicker adjustments
-  const kickerOffset = (kicker - 140) / 25.4;
-  nodes["3DGeom-9"].scale.x = kicker / 140
-  nodes["3DGeom-15"].scale.z = kicker / 140
-  nodes["3DGeom-16"].scale.z = kicker / 140
-  nodes["3DGeom-1"].position.z -= kickerOffset;
-  nodes["3DGeom-3"].position.x += kickerOffset;
-  nodes["3DGeom-4"].position.y += kickerOffset;
-  nodes["3DGeom-5"].position.y += kickerOffset;
-  nodes["3DGeom-6"].position.y -= kickerOffset;
-  nodes["3DGeom-7"].position.y -= kickerOffset;
-  nodes["3DGeom-10"].position.z += kickerOffset;
-  nodes["3DGeom-11"].position.z += kickerOffset;
-  nodes["3DGeom-12"].position.y += kickerOffset;
-  nodes["3DGeom-13"].position.y += kickerOffset;
+      if (nodeName) {
+        for (const group of nodeGroups.current) {
+          if (group.nodes.includes(nodeName)) {
+            setSelectedGroup(group.name);
+            console.log(nodeName);
+            return;
+          }
+        }
+      }
 
+      setSelectedGroup(null);
+    };
 
-  // Apply allwidth adjustments
-  if (nodes["Assembly-22"]) {
-    nodes["Assembly-22"].scale.y = allwidth / 2400000;
-  }
-
- // Combined adjustments for nodes that were being modified in multiple places
- const combinedScaleZ = (tallHeight + kicker) / 2340;
- nodes["3DGeom-2"].scale.z = combinedScaleZ;
- nodes["3DGeom-8"].scale.z = combinedScaleZ;
- 
- // Combined x-scale for 3DGeom-8 (tallDepth)
- nodes["3DGeom-2"].scale.x = tallDepth / 600;
- nodes["3DGeom-8"].scale.x = tallDepth / 600;
-
- // Combined scale for 3DGeom-14 (baseHeight and kicker)
- nodes["3DGeom-14"].scale.x = (baseHeight + kicker) / 870;
-
-}, [
-  bulkHead,
-  baseHeight,
-  baseDepth,
-  topHeight,
-  topDepth,
-  tallHeight,
-  tallDepth,
-  kicker,
-  nodes,
-  allwidth,
-  topTwo,
-  tallWidth,
-  baseTwo,
-  topOne,
-  baseOne,
-]);
-
-
-
+    const canvas = gl.domElement;
+    canvas.addEventListener("click", handleClick);
+    return () => canvas.removeEventListener("click", handleClick);
+  }, [gl, camera, scene, nodes]);
 
   return (
     <>
       <primitive object={scene} {...props} />
-
-      {/* Display selected node info */}
-      {selectedNode && (
+      {selectedGroup && (
         <Text
           position={[0, 3, 0]}
           fontSize={0.2}
@@ -369,7 +400,9 @@ useEffect(() => {
           anchorX="center"
           anchorY="middle"
         >
-          {`Selected: ${selectedNode}`}
+          {`Selected: ${
+            nodeGroups.current.find((g) => g.name === selectedGroup)?.label
+          }`}
         </Text>
       )}
     </>
