@@ -18,7 +18,6 @@ import {
   FiBox,
   FiLayers,
   FiDroplet,
-  FiImage,
   FiInfo,
 } from "react-icons/fi";
 import { MdOutlineWidthFull, MdOutlineHeight, MdTexture } from "react-icons/md";
