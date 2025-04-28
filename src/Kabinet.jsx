@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-unknown-property */
 import { Canvas } from "@react-three/fiber";
 import {
   Environment,
@@ -9,117 +11,65 @@ import ModelLaundry from "./ModelLaundry";
 import { useState, useEffect } from "react";
 import * as THREE from "three";
 import { data } from "./data";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiSettings,
+  FiBox,
+  FiLayers,
+  FiDroplet,
+  FiImage,
+  FiInfo,
+} from "react-icons/fi";
+import { MdOutlineWidthFull, MdOutlineHeight, MdTexture } from "react-icons/md";
+import { LuRuler } from "react-icons/lu";
+import { GoPackageDependencies } from "react-icons/go";
 
-// Icons components
-const ExpandIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path
-      fillRule="evenodd"
-      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
-    />
-  </svg>
-);
-
-const CollapseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path
-      fillRule="evenodd"
-      d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"
-    />
-  </svg>
-);
-
-const SettingsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-  </svg>
-);
-
-const WidthIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-    <path d="M4.646 7.646a.5.5 0 0 1 .708 0L8 10.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
-    <path d="M4.646 8.646a.5.5 0 0 1 .708 0L8 11.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
-  </svg>
-);
-
-const HeightIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path d="M8 16a.5.5 0 0 1-.5-.5v-1.293l-.646.647a.5.5 0 0 1-.707-.708L7.5 12.793v-1.086l-.646.647a.5.5 0 0 1-.707-.708L7.5 10.293V8.866l-.646.647a.5.5 0 0 1-.707-.708L7.5 7.453V6.126l-.646.647a.5.5 0 0 1-.707-.708L7.5 4.713V3.386l-.646.647a.5.5 0 0 1-.707-.708L7.5 2.05V.5a.5.5 0 0 1 1 0v1.55l1.354 1.354a.5.5 0 0 1-.708.708L8.5 3.386v1.327l1.354 1.353a.5.5 0 0 1-.708.708L8.5 6.126v1.327l1.354 1.353a.5.5 0 0 1-.708.708L8.5 8.866v1.427l1.354 1.353a.5.5 0 0 1-.708.708L8.5 10.793v1.427l1.354 1.353a.5.5 0 0 1-.708.708L8.5 12.793v1.207a.5.5 0 0 1-.5.5z" />
-  </svg>
-);
-
-const DepthIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
-    <path d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
-  </svg>
-);
-
-const TextureIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    fill="currentColor"
-    viewBox="0 0 16 16"
-  >
-    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" />
-    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" />
-  </svg>
-);
+// Texture carousel component
+const TextureCarousel = ({ textures, selected, onSelect }) => {
+  return (
+    <div className="grid grid-cols-3 gap-2 mt-2">
+      {textures.map((texture, index) => (
+        <div
+          key={index}
+          className={`relative aspect-square rounded-md overflow-hidden cursor-pointer border-2 ${
+            selected === texture ? "border-primary" : "border-transparent"
+          }`}
+          onClick={() => onSelect(texture)}
+        >
+          <img
+            src={data.textures[index]}
+            alt={texture}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = "/texture-fallback.jpg"; // Add a fallback image
+            }}
+          />
+          {selected === texture && (
+            <div className="absolute inset-0 bg-primary/20 pointer-events-none" />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 function CollapsibleControlGroup({ title, isOpen, onToggle, children, icon }) {
   return (
-    <div className="mb-3 border rounded-lg shadow-sm">
+    <div className="mb-3 border border-base-300 rounded-lg shadow-sm bg-base-100">
       <button
-        className="w-full flex items-center justify-between p-3 bg-base-100 hover:bg-base-200 rounded-lg"
+        className="w-full flex items-center justify-between p-3 hover:bg-base-200 rounded-lg transition-colors"
         onClick={onToggle}
       >
         <div className="flex items-center space-x-2">
-          {icon}
+          <span className="text-lg">{icon}</span>
           <span className="font-medium">{title}</span>
         </div>
-        {isOpen ? <CollapseIcon /> : <ExpandIcon />}
+        {isOpen ? <FiChevronUp /> : <FiChevronDown />}
       </button>
-      {isOpen && <div className="p-3 pt-1 border-t">{children}</div>}
+      {isOpen && (
+        <div className="p-3 pt-1 border-t border-base-300">{children}</div>
+      )}
     </div>
   );
 }
@@ -130,6 +80,7 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
     global: true,
     selected: true,
   });
+  const [activeTab, setActiveTab] = useState("dimensions");
 
   // Find the currently selected group
   const group = nodeGroups.find((g) => g.name === selectedGroup);
@@ -141,45 +92,113 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
     }));
   };
 
-  // Group controls by type for better organization
+  // Improved grouping logic
   const getGroupedControls = (controls) => {
     const dimensions = {};
-    const appearance = {};
+    const materials = {};
 
-    if (!controls) return { dimensions, appearance };
+    if (!controls) return { dimensions, materials };
 
     Object.entries(controls).forEach(([key, config]) => {
+      // Group dimension-related controls
       if (
-        key.includes("Width") ||
-        key.includes("Height") ||
-        key.includes("Depth") ||
-        key.includes("Size")
+        key.toLowerCase().includes("width") ||
+        key.toLowerCase().includes("height") ||
+        key.toLowerCase().includes("depth") ||
+        key.toLowerCase().includes("size") ||
+        key === "baseOne" ||
+        key === "baseTwo" ||
+        key === "topOne" ||
+        key === "topTwo" ||
+        key === "tallWidth" ||
+        key === "tallHeight" ||
+        key === "tallDepth" ||
+        key === "bulkHead" ||
+        key === "kicker"
       ) {
         dimensions[key] = config;
-      } else {
-        appearance[key] = config;
+      }
+      // Group material-related controls
+      else if (
+        key.toLowerCase().includes("texture") ||
+        key.toLowerCase().includes("material") ||
+        key === "baseOneTexture" ||
+        key === "baseTwoTexture" ||
+        key === "topOneTexture" ||
+        key === "topTwoTexture" ||
+        key === "tallTexture"
+      ) {
+        materials[key] = config;
       }
     });
 
-    return { dimensions, appearance };
+    return { dimensions, materials };
   };
 
   const getIconForControl = (key) => {
-    if (key.toLowerCase().includes("width")) return <WidthIcon />;
-    if (key.toLowerCase().includes("height")) return <HeightIcon />;
-    if (key.toLowerCase().includes("depth")) return <DepthIcon />;
+    if (
+      key.toLowerCase().includes("width") ||
+      key === "baseOne" ||
+      key === "baseTwo" ||
+      key === "topOne" ||
+      key === "topTwo" ||
+      key === "tallWidth"
+    ) {
+      return <MdOutlineWidthFull />;
+    }
+    if (
+      key.toLowerCase().includes("height") ||
+      key === "tallHeight" ||
+      key === "bulkHead" ||
+      key === "kicker"
+    ) {
+      return <MdOutlineHeight />;
+    }
+    if (
+      key.toLowerCase().includes("depth") ||
+      key === "baseDepth" ||
+      key === "topDepth" ||
+      key === "tallDepth"
+    ) {
+      return <GoPackageDependencies />;
+    }
     if (
       key.toLowerCase().includes("texture") ||
       key.toLowerCase().includes("material")
-    )
-      return <TextureIcon />;
-    return null;
+    ) {
+      return <MdTexture />;
+    }
+    return <FiSettings />;
   };
 
   // Render a single control
   const renderControl = (key, config) => {
     const icon = getIconForControl(key);
 
+    // If this is a texture/material control with options, render the carousel
+    if (
+      config.options &&
+      (key.toLowerCase().includes("texture") ||
+        key.toLowerCase().includes("material"))
+    ) {
+      return (
+        <div key={key} className="form-control mb-3">
+          <label className="label">
+            <div className="flex items-center space-x-2">
+              {icon}
+              <span className="label-text">{config.label || key}</span>
+            </div>
+          </label>
+          <TextureCarousel
+            textures={config.options}
+            selected={params[key]}
+            onSelect={(value) => setParams({ ...params, [key]: value })}
+          />
+        </div>
+      );
+    }
+
+    // Regular range/select control
     return (
       <div key={key} className="form-control mb-3">
         <label className="label">
@@ -189,7 +208,7 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
           </div>
         </label>
 
-        {/* Select for texture options */}
+        {/* Select for options */}
         {config.options ? (
           <select
             className="select select-bordered w-full"
@@ -222,7 +241,7 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
                 {config.unit || "mm"}
               </span>
             </div>
-            <div className="flex justify-between text-xs px-2 mt-1">
+            <div className="flex justify-between text-xs px-2 mt-1 text-base-content/60">
               <span>{config.min}</span>
               <span>{config.max}</span>
             </div>
@@ -232,6 +251,48 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
     );
   };
 
+  // Render tab content based on active tab
+  const renderTabContent = () => {
+    if (!group?.controls) return null;
+
+    const { dimensions, materials } = getGroupedControls(group.controls);
+
+    switch (activeTab) {
+      case "dimensions":
+        return (
+          <div className="space-y-4">
+            {Object.keys(dimensions).length > 0 ? (
+              Object.entries(dimensions).map(([key, config]) =>
+                renderControl(key, config)
+              )
+            ) : (
+              <div className="text-center py-4 text-base-content/60">
+                No dimension controls available
+              </div>
+            )}
+          </div>
+        );
+
+      case "materials":
+        return (
+          <div className="space-y-4">
+            {Object.keys(materials).length > 0 ? (
+              Object.entries(materials).map(([key, config]) =>
+                renderControl(key, config)
+              )
+            ) : (
+              <div className="text-center py-4 text-base-content/60">
+                No material controls available
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       {/* Mobile toggle button */}
@@ -239,21 +300,23 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
         className="lg:hidden fixed bottom-4 right-4 z-50 btn btn-primary btn-circle shadow-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <SettingsIcon />
+        <FiSettings className="text-xl" />
       </button>
 
       {/* Sidebar panel */}
       <div
         className={`
-        fixed top-0 right-0 h-full z-40 bg-base-200 shadow-lg overflow-y-auto transition-all duration-300
-        ${isOpen ? "w-64" : "w-0"} 
-        lg:left-0 lg:w-72 lg:transform-none
+        fixed top-0 right-0 h-full z-40 bg-base-100 shadow-xl overflow-y-auto transition-all duration-300
+        ${isOpen ? "w-80" : "w-0"} 
+        lg:left-0 lg:w-80 lg:transform-none
       `}
       >
         {isOpen && (
-          <div className="p-4">
+          <div className="p-4 h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Cabinet Controls</h2>
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <FiBox /> Cabinet Configurator
+              </h2>
               <button
                 className="lg:hidden btn btn-sm btn-ghost"
                 onClick={() => setIsOpen(false)}
@@ -262,113 +325,94 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
               </button>
             </div>
 
-            {/* Global Controls */}
-            <CollapsibleControlGroup
-              title="Global Settings"
-              isOpen={openSections.global}
-              onToggle={() => toggleSection("global")}
-              icon={<SettingsIcon />}
-            >
-              <div className="form-control">
-                <label className="label">
-                  <div className="flex items-center space-x-2">
-                    <WidthIcon />
-                    <span className="label-text">All Width</span>
-                  </div>
-                </label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="range"
-                    min="1500"
-                    max="4000"
-                    step="100"
-                    className="range range-primary flex-grow"
-                    value={params.allwidth}
-                    onChange={(e) =>
-                      setParams({
-                        ...params,
-                        allwidth: parseInt(e.target.value),
-                      })
-                    }
-                  />
-                  <span className="w-14 text-right text-sm">
-                    {params.allwidth}mm
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs px-2 mt-1">
-                  <span>1500</span>
-                  <span>4000</span>
-                </div>
-              </div>
-            </CollapsibleControlGroup>
-
-            {/* Selected Group Controls */}
-            {selectedGroup && group && (
+            <div className="flex-1 overflow-y-auto">
+              {/* Global Controls */}
               <CollapsibleControlGroup
-                title={group.label || selectedGroup}
-                isOpen={openSections.selected}
-                onToggle={() => toggleSection("selected")}
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                  </svg>
-                }
+                title="Global Settings"
+                isOpen={openSections.global}
+                onToggle={() => toggleSection("global")}
+                icon={<FiSettings />}
               >
-                {group.controls && Object.keys(group.controls).length > 0 && (
-                  <>
-                    {/* Dimensions Section */}
-                    <div className="mb-4">
-                      <h4 className="font-medium mb-2 text-sm text-base-content/70">
-                        DIMENSIONS
-                      </h4>
-                      {Object.entries(
-                        getGroupedControls(group.controls).dimensions
-                      ).map(([key, config]) => renderControl(key, config))}
+                <div className="form-control">
+                  <label className="label">
+                    <div className="flex items-center space-x-2">
+                      <LuRuler />
+
+                      <span className="label-text">Overall Width</span>
                     </div>
-
-                    {/* Appearance Section */}
-                    {Object.keys(getGroupedControls(group.controls).appearance)
-                      .length > 0 && (
-                      <div>
-                        <h4 className="font-medium mb-2 text-sm text-base-content/70">
-                          APPEARANCE
-                        </h4>
-                        {Object.entries(
-                          getGroupedControls(group.controls).appearance
-                        ).map(([key, config]) => renderControl(key, config))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </CollapsibleControlGroup>
-            )}
-
-            {!selectedGroup && (
-              <div className="alert alert-info mt-4">
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    className="stroke-current flex-shrink-0 w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  <span>Click on a part of the model to configure it.</span>
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="range"
+                      min="1500"
+                      max="4000"
+                      step="100"
+                      className="range range-primary flex-grow"
+                      value={params.allwidth}
+                      onChange={(e) =>
+                        setParams({
+                          ...params,
+                          allwidth: parseInt(e.target.value),
+                        })
+                      }
+                    />
+                    <span className="w-14 text-right text-sm">
+                      {params.allwidth}mm
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs px-2 mt-1 text-base-content/60">
+                    <span>1500</span>
+                    <span>4000</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              </CollapsibleControlGroup>
+
+              {/* Selected Group Controls */}
+              {selectedGroup && group && (
+                <CollapsibleControlGroup
+                  title={group.label || selectedGroup}
+                  isOpen={openSections.selected}
+                  onToggle={() => toggleSection("selected")}
+                  icon={<FiLayers />}
+                >
+                  {group.controls && Object.keys(group.controls).length > 0 && (
+                    <>
+                      {/* Tabs */}
+                      <div className="tabs tabs-boxed bg-base-200 mb-4">
+                        <button
+                          className={`tab flex-1 ${
+                            activeTab === "dimensions" ? "tab-active" : ""
+                          }`}
+                          onClick={() => setActiveTab("dimensions")}
+                        >
+                          <LuRuler className="mr-1" /> Dimensions
+                        </button>
+                        <button
+                          className={`tab flex-1 ${
+                            activeTab === "materials" ? "tab-active" : ""
+                          }`}
+                          onClick={() => setActiveTab("materials")}
+                        >
+                          <FiDroplet className="mr-1" /> Materials
+                        </button>
+                      </div>
+
+                      {/* Tab content */}
+                      {renderTabContent()}
+                    </>
+                  )}
+                </CollapsibleControlGroup>
+              )}
+
+              {!selectedGroup && (
+                <div className="alert alert-info mt-4">
+                  <div className="flex items-start gap-2">
+                    <FiInfo className="flex-shrink-0 mt-0.5" />
+                    <span>Click on a part of the model to configure it.</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -392,6 +436,21 @@ function Kabinet() {
   useEffect(() => {
     if (data.nodesData) {
       setNodeGroups(data.nodesData);
+      // Initialize params with default values from nodesData
+      const initialParams = { ...data.varibles };
+      data.nodesData.forEach((group) => {
+        if (group.controls) {
+          Object.entries(group.controls).forEach(([key, config]) => {
+            if (
+              config.value !== undefined &&
+              initialParams[key] === undefined
+            ) {
+              initialParams[key] = config.value;
+            }
+          });
+        }
+      });
+      setParams(initialParams);
     }
   }, []);
 
@@ -404,7 +463,7 @@ function Kabinet() {
         nodeGroups={nodeGroups}
       />
 
-      <div className="lg:ml-72 h-full">
+      <div className="lg:ml-80 h-full">
         <Canvas
           gl={{
             logarithmicDepthBuffer: true,
@@ -421,7 +480,7 @@ function Kabinet() {
           <Environment
             preset="apartment"
             background
-            backgroundBlurriness={100}
+            backgroundBlurriness={0.5}
           />
 
           <ambientLight intensity={0.2} color="#ffffff" />
