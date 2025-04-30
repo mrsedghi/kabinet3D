@@ -6,11 +6,11 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Kabinet />,
+      element: <Kabinet1 />,
     },
     {
       path: "/1",
-      element: <Kabinet1 />,
+      element: <Kabinet />,
     },
   ]);
 
