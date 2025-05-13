@@ -14,12 +14,12 @@ export const data = {
     tallHeight: 2200,
     tallDepth: 600,
     tallWidth: 930,
-    bulkHead: 300,
-    kicker: 140,
-    baseOne: 800,
-    baseTwo: 600,
-    topOne: 700,
-    topTwo: 700,
+    bulkHeadHeight: 300,
+    kickerHeight: 140,
+    baseOneWidth: 800,
+    baseTwoWidth: 600,
+    topOneWidth: 700,
+    topTwoWidth: 700,
     borderColor: "#ff0000",
     borderThickness: 0.05,
   },
@@ -30,13 +30,12 @@ export const data = {
       label: "Base One",
       material: "baseOne",
       controls: {
-        baseOne: {
+        baseOneWidth: {
           value: 800,
           min: 500,
           max: 1000,
           step: 10,
           label: "Width",
-          order: -1000,
         },
         baseHeight: {
           value: 730,
@@ -44,7 +43,6 @@ export const data = {
           max: 1000,
           step: 10,
           label: "Height",
-          order: -999,
         },
         baseDepth: {
           value: 580,
@@ -52,7 +50,6 @@ export const data = {
           max: 800,
           step: 10,
           label: "Depth",
-          order: -998,
         },
         baseOneTexture: {
           value: "Texture 1",
@@ -64,199 +61,21 @@ export const data = {
             "Texture 5",
           ],
           label: "Texture",
-          order: -997,
         },
       },
-      scales: [
-        {
-          node: "Assembly-22",
-          axis: "y",
-          param: "allwidth",
-          baseValue: 2400000,
-        },
-        { node: "3DGeom-10", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-11", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-12", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-13", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-14", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-15", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-16", axis: "y", param: "baseDepth", baseValue: 580 },
-        { node: "3DGeom-10", axis: "z", param: "baseHeight", baseValue: 730 },
-        { node: "3DGeom-11", axis: "z", param: "baseHeight", baseValue: 730 },
-        { node: "3DGeom-10", axis: "x", param: "baseOne", baseValue: 800 },
-        { node: "3DGeom-13", axis: "x", param: "baseOne", baseValue: 800 },
-        { node: "3DGeom-16", axis: "x", param: "baseOne", baseValue: 800 },
-      ],
-      positions: [
-        {
-          node: "3DGeom-11",
-          axis: "x",
-          offsets: [
-            { param: "baseOne", baseValue: 800 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-        {
-          node: "3DGeom-12",
-          axis: "x",
-          offsets: [
-            { param: "baseOne", baseValue: 800 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-        {
-          node: "3DGeom-14",
-          axis: "x",
-          offsets: [
-            { param: "baseOne", baseValue: 800 },
-            { param: "baseTwo", baseValue: 600 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-        {
-          node: "3DGeom-15",
-          axis: "x",
-          offsets: [
-            { param: "baseOne", baseValue: 800 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-        {
-          node: "3DGeom-4",
-          axis: "x",
-          offsets: [
-            { param: "topOne", baseValue: 700 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-        {
-          node: "3DGeom-6",
-          axis: "x",
-          offsets: [
-            { param: "topOne", baseValue: 700 },
-            { param: "tallWidth", baseValue: 930 },
-          ],
-        },
-
-        {
-          node: "3DGeom-3",
-          axis: "z",
-          offsets: [
-            { param: "tallHeight", baseValue: 2200 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-        {
-          node: "3DGeom-4",
-          axis: "z",
-          offsets: [
-            { param: "tallHeight", baseValue: 2200 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-        {
-          node: "3DGeom-5",
-          axis: "z",
-          offsets: [
-            { param: "tallHeight", baseValue: 2200 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-        {
-          node: "3DGeom-6",
-          axis: "z",
-          offsets: [
-            { param: "tallHeight", baseValue: 2200 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-        {
-          node: "3DGeom-7",
-          axis: "z",
-          offsets: [
-            { param: "tallHeight", baseValue: 2200 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-
-        {
-          node: "3DGeom-2",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-        {
-          node: "3DGeom-10",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-        {
-          node: "3DGeom-7",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-        {
-          node: "3DGeom-5",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-        {
-          node: "3DGeom-16",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-        {
-          node: "3DGeom-13",
-          axis: "x",
-          offsets: [{ param: "tallWidth", baseValue: 930 }],
-        },
-
-        {
-          node: "3DGeom-1",
-          axis: "z",
-          offsets: [{ param: "kicker", baseValue: 140 }],
-        },
-        {
-          node: "3DGeom-10",
-          axis: "z",
-          offsets: [{ param: "kicker", baseValue: 140 }],
-        },
-        {
-          node: "3DGeom-11",
-          axis: "z",
-          offsets: [{ param: "kicker", baseValue: 140 }],
-        },
-
-        {
-          node: "3DGeom-12",
-          axis: "z",
-          offsets: [
-            { param: "baseHeight", baseValue: 730 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-        {
-          node: "3DGeom-13",
-          axis: "z",
-          offsets: [
-            { param: "baseHeight", baseValue: 730 },
-            { param: "kicker", baseValue: 140 },
-          ],
-        },
-      ],
     },
     {
-      name: "baseTwo",
+      name: "baseTwoWidth",
       nodes: ["3DGeom-11"],
       label: "Base Two",
       material: "baseTwo",
       controls: {
-        baseTwo: {
+        baseTwoWidth: {
           value: 600,
           min: 500,
           max: 1000,
           step: 10,
           label: "Width",
-          order: -1000,
         },
         baseHeight: {
           value: 730,
@@ -264,7 +83,6 @@ export const data = {
           max: 1000,
           step: 10,
           label: "Height",
-          order: -999,
         },
         baseDepth: {
           value: 580,
@@ -272,7 +90,6 @@ export const data = {
           max: 800,
           step: 10,
           label: "Depth",
-          order: -998,
         },
         baseTwoTexture: {
           value: "Texture 1",
@@ -284,28 +101,22 @@ export const data = {
             "Texture 5",
           ],
           label: "Texture",
-          order: -997,
         },
       },
-      scales: [
-        { node: "3DGeom-11", axis: "x", param: "baseTwo", baseValue: 600 },
-        { node: "3DGeom-12", axis: "x", param: "baseTwo", baseValue: 600 },
-        { node: "3DGeom-15", axis: "x", param: "baseTwo", baseValue: 600 },
-      ],
+      scales: [],
     },
     {
-      name: "topTwo",
+      name: "topTwoWidth",
       nodes: ["3DGeom-6"],
       label: "Top Two",
       material: "topTwo",
       controls: {
-        topTwo: {
+        topTwoWidth: {
           value: 700,
           min: 500,
           max: 900,
           step: 10,
           label: "Width",
-          order: -1000,
         },
         topHeight: {
           value: 730,
@@ -313,7 +124,6 @@ export const data = {
           max: 900,
           step: 10,
           label: "Height",
-          order: -999,
         },
         topDepth: {
           value: 320,
@@ -321,7 +131,6 @@ export const data = {
           max: 500,
           step: 10,
           label: "Depth",
-          order: -998,
         },
         topTwoTexture: {
           value: "Texture 1",
@@ -333,27 +142,21 @@ export const data = {
             "Texture 5",
           ],
           label: "Texture",
-          order: -997,
         },
       },
-      scales: [
-        { node: "3DGeom-4", axis: "x", param: "topTwo", baseValue: 700 },
-        { node: "3DGeom-6", axis: "x", param: "topTwo", baseValue: 700 },
-      ],
     },
     {
-      name: "topOne",
+      name: "topOneWidth",
       nodes: ["3DGeom-7"],
       label: "Top One",
       material: "topOne",
       controls: {
-        topOne: {
+        topOneWidth: {
           value: 700,
           min: 500,
           max: 900,
           step: 10,
           label: "Width",
-          order: -1000,
         },
         topHeight: {
           value: 730,
@@ -361,7 +164,6 @@ export const data = {
           max: 900,
           step: 10,
           label: "Height",
-          order: -999,
         },
         topDepth: {
           value: 320,
@@ -369,7 +171,6 @@ export const data = {
           max: 500,
           step: 10,
           label: "Depth",
-          order: -998,
         },
         topOneTexture: {
           value: "Texture 1",
@@ -381,19 +182,8 @@ export const data = {
             "Texture 5",
           ],
           label: "Texture",
-          order: -997,
         },
       },
-      scales: [
-        { node: "3DGeom-4", axis: "y", param: "topDepth", baseValue: 320 },
-        { node: "3DGeom-5", axis: "y", param: "topDepth", baseValue: 320 },
-        { node: "3DGeom-6", axis: "y", param: "topDepth", baseValue: 320 },
-        { node: "3DGeom-7", axis: "y", param: "topDepth", baseValue: 320 },
-        { node: "3DGeom-6", axis: "z", param: "topHeight", baseValue: 730 },
-        { node: "3DGeom-7", axis: "z", param: "topHeight", baseValue: 730 },
-        { node: "3DGeom-7", axis: "x", param: "topOne", baseValue: 700 },
-        { node: "3DGeom-5", axis: "x", param: "topOne", baseValue: 700 },
-      ],
     },
     {
       name: "tallGroup",
@@ -407,7 +197,6 @@ export const data = {
           max: 2000,
           step: 10,
           label: "Width",
-          order: -1000,
         },
         tallHeight: {
           value: 2200,
@@ -415,7 +204,6 @@ export const data = {
           max: 2500,
           step: 10,
           label: "Height",
-          order: -999,
         },
         tallDepth: {
           value: 600,
@@ -423,7 +211,6 @@ export const data = {
           max: 700,
           step: 10,
           label: "Depth",
-          order: -998,
         },
         tallTexture: {
           value: "Texture 1",
@@ -435,87 +222,282 @@ export const data = {
             "Texture 5",
           ],
           label: "Texture",
-          order: -997,
         },
       },
-      scales: [
-        { node: "3DGeom-1", axis: "z", param: "tallHeight", baseValue: 2200 },
-        { node: "3DGeom-1", axis: "y", param: "tallDepth", baseValue: 600 },
-        { node: "3DGeom-2", axis: "y", param: "tallDepth", baseValue: 600 },
-        { node: "3DGeom-3", axis: "y", param: "tallDepth", baseValue: 600 },
-        { node: "3DGeom-8", axis: "y", param: "tallDepth", baseValue: 600 },
-        { node: "3DGeom-9", axis: "y", param: "tallDepth", baseValue: 600 },
-        {
-          node: "3DGeom-1",
-          axis: "x",
-          value: (params) => params.tallWidth - 30,
-          baseValue: 900,
-        },
-        { node: "3DGeom-3", axis: "x", param: "tallWidth", baseValue: 930 },
-        {
-          node: "3DGeom-9",
-          axis: "x",
-          value: (params) => params.tallWidth - 30,
-          baseValue: 900,
-        },
-      ],
     },
     {
-      name: "bulkheadGroup",
+      name: "bulkHead Group",
       nodes: ["3DGeom-3", "3DGeom-4", "3DGeom-5"],
-      label: "Bulkhead Group",
+      label: "bulkHead Group",
       controls: {
-        bulkHead: {
+        bulkHeadHeight: {
           value: 300,
           min: 100,
           max: 500,
           step: 10,
           label: "Height",
-          order: -1000,
         },
       },
-      scales: [
-        { node: "3DGeom-3", axis: "z", param: "bulkHead", baseValue: 300 },
-        { node: "3DGeom-4", axis: "z", param: "bulkHead", baseValue: 300 },
-        { node: "3DGeom-5", axis: "z", param: "bulkHead", baseValue: 300 },
-      ],
     },
     {
       name: "kickerGroup",
       nodes: ["3DGeom-9", "3DGeom-15", "3DGeom-16"],
-      label: "Kicker Group",
+      label: "kickerGroup",
       controls: {
-        kicker: {
+        kickerHeight: {
           value: 140,
           min: 100,
           max: 300,
           step: 10,
           label: "Height",
-          order: -1000,
         },
       },
-      scales: [
-        { node: "3DGeom-9", axis: "z", param: "kicker", baseValue: 140 },
-        { node: "3DGeom-15", axis: "z", param: "kicker", baseValue: 140 },
-        { node: "3DGeom-16", axis: "z", param: "kicker", baseValue: 140 },
-        {
-          node: "3DGeom-14",
-          axis: "z",
-          value: (params) => params.baseHeight + params.kicker,
-          baseValue: 870,
-        },
-        {
-          node: "3DGeom-2",
-          axis: "z",
-          value: (params) => params.tallHeight + params.kicker,
-          baseValue: 2340,
-        },
-        {
-          node: "3DGeom-8",
-          axis: "z",
-          value: (params) => params.tallHeight + params.kicker,
-          baseValue: 2340,
-        },
+    },
+  ],
+  scales: [
+    {
+      node: "Assembly-22",
+      axis: "y",
+      param: "allwidth",
+      baseValue: 2400000,
+    },
+    { node: "3DGeom-10", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-11", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-12", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-13", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-14", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-15", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-16", axis: "y", param: "baseDepth", baseValue: 580 },
+    { node: "3DGeom-10", axis: "z", param: "baseHeight", baseValue: 730 },
+    { node: "3DGeom-11", axis: "z", param: "baseHeight", baseValue: 730 },
+    { node: "3DGeom-10", axis: "x", param: "baseOneWidth", baseValue: 800 },
+    { node: "3DGeom-13", axis: "x", param: "baseOneWidth", baseValue: 800 },
+    { node: "3DGeom-16", axis: "x", param: "baseOneWidth", baseValue: 800 },
+    { node: "3DGeom-9", axis: "z", param: "kickerHeight", baseValue: 140 },
+    { node: "3DGeom-15", axis: "z", param: "kickerHeight", baseValue: 140 },
+    { node: "3DGeom-16", axis: "z", param: "kickerHeight", baseValue: 140 },
+    { node: "3DGeom-1", axis: "z", param: "tallHeight", baseValue: 2200 },
+    { node: "3DGeom-1", axis: "y", param: "tallDepth", baseValue: 600 },
+    { node: "3DGeom-2", axis: "y", param: "tallDepth", baseValue: 600 },
+    { node: "3DGeom-3", axis: "y", param: "tallDepth", baseValue: 600 },
+    { node: "3DGeom-8", axis: "y", param: "tallDepth", baseValue: 600 },
+    { node: "3DGeom-9", axis: "y", param: "tallDepth", baseValue: 600 },
+    { node: "3DGeom-4", axis: "y", param: "topDepth", baseValue: 320 },
+    { node: "3DGeom-5", axis: "y", param: "topDepth", baseValue: 320 },
+    { node: "3DGeom-6", axis: "y", param: "topDepth", baseValue: 320 },
+    { node: "3DGeom-7", axis: "y", param: "topDepth", baseValue: 320 },
+    { node: "3DGeom-6", axis: "z", param: "topHeight", baseValue: 730 },
+    { node: "3DGeom-7", axis: "z", param: "topHeight", baseValue: 730 },
+    { node: "3DGeom-7", axis: "x", param: "topOneWidth", baseValue: 700 },
+    { node: "3DGeom-5", axis: "x", param: "topOneWidth", baseValue: 700 },
+    { node: "3DGeom-4", axis: "x", param: "topTwoWidth", baseValue: 700 },
+    { node: "3DGeom-6", axis: "x", param: "topTwoWidth", baseValue: 700 },
+    { node: "3DGeom-11", axis: "x", param: "baseTwoWidth", baseValue: 600 },
+    { node: "3DGeom-12", axis: "x", param: "baseTwoWidth", baseValue: 600 },
+    { node: "3DGeom-15", axis: "x", param: "baseTwoWidth", baseValue: 600 },
+    {
+      node: "3DGeom-1",
+      axis: "x",
+      value: (params) => params.tallWidth - 30,
+      baseValue: 900,
+    },
+    { node: "3DGeom-3", axis: "x", param: "tallWidth", baseValue: 930 },
+    {
+      node: "3DGeom-9",
+      axis: "x",
+      value: (params) => params.tallWidth - 30,
+      baseValue: 900,
+    },
+    {
+      node: "3DGeom-3",
+      axis: "z",
+      param: "bulkHeadHeight",
+      baseValue: 300,
+    },
+    {
+      node: "3DGeom-4",
+      axis: "z",
+      param: "bulkHeadHeight",
+      baseValue: 300,
+    },
+    {
+      node: "3DGeom-5",
+      axis: "z",
+      param: "bulkHeadHeight",
+      baseValue: 300,
+    },
+    {
+      node: "3DGeom-14",
+      axis: "z",
+      value: (params) => params.baseHeight + params.kickerHeight,
+      baseValue: 870,
+    },
+    {
+      node: "3DGeom-2",
+      axis: "z",
+      value: (params) => params.tallHeight + params.kickerHeight,
+      baseValue: 2340,
+    },
+    {
+      node: "3DGeom-8",
+      axis: "z",
+      value: (params) => params.tallHeight + params.kickerHeight,
+      baseValue: 2340,
+    },
+  ],
+  positions: [
+    {
+      node: "3DGeom-11",
+      axis: "x",
+      offsets: [
+        { param: "baseOneWidth", baseValue: 800 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+    {
+      node: "3DGeom-12",
+      axis: "x",
+      offsets: [
+        { param: "baseOneWidth", baseValue: 800 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+    {
+      node: "3DGeom-14",
+      axis: "x",
+      offsets: [
+        { param: "baseOneWidth", baseValue: 800 },
+        { param: "baseTwoWidth", baseValue: 600 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+    {
+      node: "3DGeom-15",
+      axis: "x",
+      offsets: [
+        { param: "baseOneWidth", baseValue: 800 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+    {
+      node: "3DGeom-4",
+      axis: "x",
+      offsets: [
+        { param: "topOneWidth", baseValue: 700 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+    {
+      node: "3DGeom-6",
+      axis: "x",
+      offsets: [
+        { param: "topOneWidth", baseValue: 700 },
+        { param: "tallWidth", baseValue: 930 },
+      ],
+    },
+
+    {
+      node: "3DGeom-3",
+      axis: "z",
+      offsets: [
+        { param: "tallHeight", baseValue: 2200 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+    {
+      node: "3DGeom-4",
+      axis: "z",
+      offsets: [
+        { param: "tallHeight", baseValue: 2200 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+    {
+      node: "3DGeom-5",
+      axis: "z",
+      offsets: [
+        { param: "tallHeight", baseValue: 2200 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+    {
+      node: "3DGeom-6",
+      axis: "z",
+      offsets: [
+        { param: "tallHeight", baseValue: 2200 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+    {
+      node: "3DGeom-7",
+      axis: "z",
+      offsets: [
+        { param: "tallHeight", baseValue: 2200 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+
+    {
+      node: "3DGeom-2",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+    {
+      node: "3DGeom-10",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+    {
+      node: "3DGeom-7",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+    {
+      node: "3DGeom-5",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+    {
+      node: "3DGeom-16",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+    {
+      node: "3DGeom-13",
+      axis: "x",
+      offsets: [{ param: "tallWidth", baseValue: 930 }],
+    },
+
+    {
+      node: "3DGeom-1",
+      axis: "z",
+      offsets: [{ param: "kickerHeight", baseValue: 140 }],
+    },
+    {
+      node: "3DGeom-10",
+      axis: "z",
+      offsets: [{ param: "kickerHeight", baseValue: 140 }],
+    },
+    {
+      node: "3DGeom-11",
+      axis: "z",
+      offsets: [{ param: "kickerHeight", baseValue: 140 }],
+    },
+
+    {
+      node: "3DGeom-12",
+      axis: "z",
+      offsets: [
+        { param: "baseHeight", baseValue: 730 },
+        { param: "kickerHeight", baseValue: 140 },
+      ],
+    },
+    {
+      node: "3DGeom-13",
+      axis: "z",
+      offsets: [
+        { param: "baseHeight", baseValue: 730 },
+        { param: "kickerHeight", baseValue: 140 },
       ],
     },
   ],
@@ -539,7 +521,7 @@ export const data = {
       maxHeight: 1000,
     },
     {
-      pattern: "topOne",
+      pattern: "topOneWidth",
       textureParam: "topOneTexture",
       nodeName: "3DGeom-7",
       baseWidth: 700,
@@ -548,7 +530,7 @@ export const data = {
       maxHeight: 900,
     },
     {
-      pattern: "topTwo",
+      pattern: "topTwoWidth",
       textureParam: "topTwoTexture",
       nodeName: "3DGeom-6",
       baseWidth: 700,

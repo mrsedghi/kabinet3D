@@ -1,11 +1,9 @@
-import { useGLTF, Text } from "@react-three/drei";
+/* eslint-disable react/prop-types */
+import { useGLTF, Text, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { data } from "./data";
-
-import { dataTest } from "./data copy";
-import transformData from "./transform";
 
 export default function ModelLaundry({
   selectedGroup,
@@ -13,13 +11,44 @@ export default function ModelLaundry({
   params,
   ...props
 }) {
-  const { scene, nodes, materials } = useGLTF(data.glbUrl);
+  const { scene, nodes, materials, animations } = useGLTF(data.glbUrl);
   const { gl, camera } = useThree();
   const textureConfigs = data.textureConfig;
-  const transformedData = transformData(dataTest);
-  console.log(transformedData);
-  console.log(materials);
+  // console.log(animations);
+  console.log(nodes);
 
+  const { ref, mixer, names, actions, clips } = useAnimations(animations);
+
+  console.log(clips);
+  useEffect(() => {
+    const doorOpenAnimation = () => {
+      if (names.length > 0) {
+        const action = actions["openDoor"]; // Play the first animation
+        if (action) {
+          action;
+          action.reset();
+          action.setLoop(THREE.LoopOnce, 1);
+          action.clampWhenFinished = true; // Correct way to set this property
+          action.play();
+        }
+      }
+    };
+
+    const doorCloseAnimation = () => {
+      if (names.length > 0) {
+        const action = actions["closeDoor"]; // Play the first animation
+        if (action) {
+          action;
+          action.reset();
+          action.setLoop(THREE.LoopOnce, 1);
+          action.clampWhenFinished = true; // Correct way to set this property
+          action.play();
+        }
+      }
+    };
+    doorCloseAnimation();
+  });
+  nodes["tallLeftDoor"].scale.x = 2;
   // Create outline material for borders
   const [outlineMaterial] = useState(
     () =>
@@ -215,13 +244,19 @@ export default function ModelLaundry({
       }
     };
 
-    data.scales.forEach(({ node, axis, param, value, baseValue }) => {
-      const scaleValue = value
-        ? typeof value === "function"
-          ? value(params)
-          : value
-        : params[param];
-      applyScale(node, axis, scaleValue, baseValue);
+    data.nodesData.forEach((node) => {
+      if (node.scales) {
+        node.scales.forEach(
+          ({ node: nodeName, axis, param, value, baseValue }) => {
+            const scaleValue = value
+              ? typeof value === "function"
+                ? value(params)
+                : value
+              : params[param];
+            applyScale(nodeName, axis, scaleValue, baseValue);
+          }
+        );
+      }
     });
 
     // Position transformations
@@ -235,13 +270,16 @@ export default function ModelLaundry({
     };
 
     // Apply position transformations
+    data.nodesData.forEach((node) => {
+      if (node.positions) {
+        node.positions.forEach(({ node, axis, offsets }) => {
+          const totalOffset = offsets.reduce((sum, { param, baseValue }) => {
+            return sum + roundTo((params[param] - baseValue) / 25.4, 2);
+          }, 0);
 
-    data.positions.forEach(({ node, axis, offsets }) => {
-      const totalOffset = offsets.reduce((sum, { param, baseValue }) => {
-        return sum + roundTo((params[param] - baseValue) / 25.4, 2);
-      }, 0);
-
-      applyPosition(node, axis, totalOffset);
+          applyPosition(node, axis, totalOffset);
+        });
+      }
     });
   });
 
@@ -381,7 +419,7 @@ export default function ModelLaundry({
 
   return (
     <>
-      <primitive object={scene} {...props} />
+      <primitive ref={ref} object={scene} {...props} />
       {selectedGroup && (
         <Text
           position={[0, 3, 0]}

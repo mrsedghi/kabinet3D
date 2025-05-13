@@ -39,7 +39,7 @@ const TextureCarousel = ({ textures, selected, onSelect }) => {
           <img
             src={data.textures[index]}
             alt={texture}
-            className="w-full h-full object-cover"
+            className="w-24 h-24 object-cover"
             onError={(e) => {
               e.target.src = "/texture-fallback.jpg"; // Add a fallback image
             }}
@@ -103,29 +103,14 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
       if (
         key.toLowerCase().includes("width") ||
         key.toLowerCase().includes("height") ||
-        key.toLowerCase().includes("depth") ||
-        key.toLowerCase().includes("size") ||
-        key === "baseOne" ||
-        key === "baseTwo" ||
-        key === "topOne" ||
-        key === "topTwo" ||
-        key === "tallWidth" ||
-        key === "tallHeight" ||
-        key === "tallDepth" ||
-        key === "bulkHead" ||
-        key === "kicker"
+        key.toLowerCase().includes("depth")
       ) {
         dimensions[key] = config;
       }
       // Group material-related controls
       else if (
         key.toLowerCase().includes("texture") ||
-        key.toLowerCase().includes("material") ||
-        key === "baseOneTexture" ||
-        key === "baseTwoTexture" ||
-        key === "topOneTexture" ||
-        key === "topTwoTexture" ||
-        key === "tallTexture"
+        key.toLowerCase().includes("material")
       ) {
         materials[key] = config;
       }
@@ -135,30 +120,13 @@ function ControlPanel({ selectedGroup, params, setParams, nodeGroups }) {
   };
 
   const getIconForControl = (key) => {
-    if (
-      key.toLowerCase().includes("width") ||
-      key === "baseOne" ||
-      key === "baseTwo" ||
-      key === "topOne" ||
-      key === "topTwo" ||
-      key === "tallWidth"
-    ) {
+    if (key.toLowerCase().includes("width")) {
       return <MdOutlineWidthFull />;
     }
-    if (
-      key.toLowerCase().includes("height") ||
-      key === "tallHeight" ||
-      key === "bulkHead" ||
-      key === "kicker"
-    ) {
+    if (key.toLowerCase().includes("height")) {
       return <MdOutlineHeight />;
     }
-    if (
-      key.toLowerCase().includes("depth") ||
-      key === "baseDepth" ||
-      key === "topDepth" ||
-      key === "tallDepth"
-    ) {
+    if (key.toLowerCase().includes("depth")) {
       return <GoPackageDependencies />;
     }
     if (

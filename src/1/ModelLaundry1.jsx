@@ -42,24 +42,24 @@ export default function ModelLaundry(props) {
     tallHeight: 2200,
     tallDepth: 600,
     tallWidth: 930,
-    bulkHead: 300,
-    kicker: 140,
-    baseOne: 800,
-    baseTwo: 600,
-    topOne: 875,
-    topTwo: 437,
+    bulkHeadHeight: 300,
+    kickerHeight: 140,
+    baseOneWidth: 800,
+    baseTwoWidth: 600,
+    topOneWidth: 875,
+    topTwoWidth: 437,
     borderColor: "#ff0000",
     borderThickness: 0.05,
   });
 
   // Define node groups with controls
   const nodeGroups = useRef({
-    baseOne: {
+    baseOneWidth: {
       nodes: ["3DGeom-10"],
       label: "Base One",
-      material: "baseOne",
+      material: "baseOneWidth",
       controls: {
-        baseOne: {
+        baseOneWidth: {
           value: 800,
           min: 500,
           max: 1000,
@@ -97,12 +97,12 @@ export default function ModelLaundry(props) {
         },
       },
     },
-    baseTwo: {
+    baseTwoWidth: {
       nodes: ["3DGeom-11"],
       label: "Base Two",
-      material: "baseTwo",
+      material: "baseTwoWidth",
       controls: {
-        baseTwo: {
+        baseTwoWidth: {
           value: 600,
           min: 500,
           max: 1000,
@@ -140,12 +140,12 @@ export default function ModelLaundry(props) {
         },
       },
     },
-    topTwo: {
+    topTwoWidth: {
       nodes: ["3DGeom-18"],
       label: "Top Two",
-      material: "topTwo",
+      material: "topTwoWidth",
       controls: {
-        topTwo: {
+        topTwoWidth: {
           value: 437,
           min: 400,
           max: 900,
@@ -183,12 +183,12 @@ export default function ModelLaundry(props) {
         },
       },
     },
-    topOne: {
+    topOneWidth: {
       nodes: ["3DGeom-21"],
       label: "Top One",
-      material: "topOne",
+      material: "topOneWidth",
       controls: {
-        topOne: {
+        topOneWidth: {
           value: 875,
           min: 500,
           max: 900,
@@ -269,11 +269,11 @@ export default function ModelLaundry(props) {
         },
       },
     },
-    bulkheadGroup: {
+    bulkHeadGroup: {
       nodes: ["3DGeom-16", "3DGeom-6"],
-      label: "Bulkhead Group",
+      label: "bulkHead Group",
       controls: {
-        bulkHead: {
+        bulkHeadHeight: {
           value: 300,
           min: 100,
           max: 500,
@@ -285,9 +285,9 @@ export default function ModelLaundry(props) {
     },
     kickerGroup: {
       nodes: ["3DGeom-9", "3DGeom-15", "3DGeom-16"],
-      label: "Kicker Group",
+      label: "kickerGroup",
       controls: {
-        kicker: {
+        kickerHeight: {
           value: 140,
           min: 100,
           max: 300,
@@ -394,13 +394,13 @@ export default function ModelLaundry(props) {
 
     Object.entries(nodeGroups.current).forEach(([groupName, groupData]) => {
       if (groupData.material && materials[groupData.material]) {
-        const textureParam = groupName.includes("baseOne")
+        const textureParam = groupName.includes("baseOneWidth")
           ? params.baseOneTexture
-          : groupName.includes("baseTwo")
+          : groupName.includes("baseTwoWidth")
           ? params.baseTwoTexture
-          : groupName.includes("topOne")
+          : groupName.includes("topOneWidth")
           ? params.topOneTexture
-          : groupName.includes("topTwo")
+          : groupName.includes("topTwoWidth")
           ? params.topTwoTexture
           : groupName.includes("tall")
           ? params.tallTexture
@@ -408,7 +408,7 @@ export default function ModelLaundry(props) {
 
         let repeatX, repeatY;
 
-        if (groupName.includes("baseOne")) {
+        if (groupName.includes("baseOneWidth")) {
           const repeat = calculateDynamicRepeat(
             "3DGeom-10",
             800,
@@ -420,7 +420,7 @@ export default function ModelLaundry(props) {
           );
           repeatX = repeat.x;
           repeatY = repeat.y;
-        } else if (groupName.includes("baseTwo")) {
+        } else if (groupName.includes("baseTwoWidth")) {
           const repeat = calculateDynamicRepeat(
             "3DGeom-11",
             600,
@@ -432,7 +432,7 @@ export default function ModelLaundry(props) {
           );
           repeatX = repeat.x;
           repeatY = repeat.y;
-        } else if (groupName.includes("topOne")) {
+        } else if (groupName.includes("topOneWidth")) {
           const repeat = calculateDynamicRepeat(
             "3DGeom-7",
             700,
@@ -444,7 +444,7 @@ export default function ModelLaundry(props) {
           );
           repeatX = repeat.x;
           repeatY = repeat.y;
-        } else if (groupName.includes("topTwo")) {
+        } else if (groupName.includes("topTwoWidth")) {
           const repeat = calculateDynamicRepeat(
             "3DGeom-6",
             700,
@@ -559,34 +559,34 @@ export default function ModelLaundry(props) {
 
     // Calculate all offsets with rounding
     const baseHeightOffset = roundTo((params.baseHeight - 730) / 25.4, 2);
-    const baseOneOffset = roundTo((params.baseOne - 800) / 25.4, 2);
-    const baseTwoOffset = roundTo((params.baseTwo - 600) / 25.4, 2);
-    const topOneOffset = roundTo((params.topOne - 875) / 25.4, 2);
+    const baseOneWidthOffset = roundTo((params.baseOneWidth - 800) / 25.4, 2);
+    const baseTwoWidthOffset = roundTo((params.baseTwoWidth - 600) / 25.4, 2);
+    const topOneWidthOffset = roundTo((params.topOneWidth - 875) / 25.4, 2);
     const topDepthOffset = roundTo((params.topDepth - 320) / 25.4, 2);
     const tallHeightOffset = roundTo((params.tallHeight - 2200) / 25.4, 2);
     const tallWidthOffset = roundTo((params.tallWidth - 930) / 25.4, 2);
-    const kickerOffset = roundTo((params.kicker - 140) / 25.4, 2);
+    const kickerHeightOffset = roundTo((params.kickerHeight - 140) / 25.4, 2);
 
     // Apply scale transformations with rounding
-    nodes["3DGeom-16"].scale.z = roundTo(params.bulkHead / 300, 4);
-    nodes["3DGeom-6"].scale.z = roundTo(params.bulkHead / 300, 4);
+    nodes["3DGeom-16"].scale.z = roundTo(params.bulkHeadHeight / 300, 4);
+    nodes["3DGeom-6"].scale.z = roundTo(params.bulkHeadHeight / 300, 4);
 
     nodes["3DGeom-21"].scale.y = roundTo(params.topDepth / 320, 4);
     nodes["3DGeom-18"].scale.y = roundTo(params.topDepth / 320, 4);
     nodes["3DGeom-10"].scale.z = roundTo(params.baseHeight / 730, 4);
     nodes["3DGeom-11"].scale.z = roundTo(params.baseHeight / 730, 4);
-    nodes["3DGeom-10"].scale.y = roundTo(params.baseOne / 800, 4);
-    nodes["3DGeom-13"].scale.x = roundTo(params.baseOne / 800, 4);
-    nodes["3DGeom-16"].scale.y = roundTo(params.baseOne / 800, 4);
-    nodes["3DGeom-11"].scale.y = roundTo(params.baseTwo / 600, 4);
-    nodes["3DGeom-12"].scale.x = roundTo(params.baseTwo / 600, 4);
-    nodes["3DGeom-15"].scale.y = roundTo(params.baseTwo / 600, 4);
+    nodes["3DGeom-10"].scale.y = roundTo(params.baseOneWidth / 800, 4);
+    nodes["3DGeom-13"].scale.x = roundTo(params.baseOneWidth / 800, 4);
+    nodes["3DGeom-16"].scale.y = roundTo(params.baseOneWidth / 800, 4);
+    nodes["3DGeom-11"].scale.y = roundTo(params.baseTwoWidth / 600, 4);
+    nodes["3DGeom-12"].scale.x = roundTo(params.baseTwoWidth / 600, 4);
+    nodes["3DGeom-15"].scale.y = roundTo(params.baseTwoWidth / 600, 4);
     nodes["3DGeom-18"].scale.z = roundTo(params.topHeight / 730, 4);
     nodes["3DGeom-21"].scale.z = roundTo(params.topHeight / 730, 4);
-    nodes["3DGeom-21"].scale.x = roundTo(params.topOne / 875, 4);
-    nodes["3DGeom-16"].scale.x = roundTo(params.topOne / 875, 4);
-    nodes["3DGeom-18"].scale.x = roundTo(params.topTwo / 437, 4);
-    nodes["3DGeom-6"].scale.x = roundTo(params.topTwo / 437, 4);
+    nodes["3DGeom-21"].scale.x = roundTo(params.topOneWidth / 875, 4);
+    nodes["3DGeom-16"].scale.x = roundTo(params.topOneWidth / 875, 4);
+    nodes["3DGeom-18"].scale.x = roundTo(params.topTwoWidth / 437, 4);
+    nodes["3DGeom-6"].scale.x = roundTo(params.topTwoWidth / 437, 4);
     nodes["3DGeom-1"].scale.z = roundTo(params.tallHeight / 2200, 4);
     nodes["3DGeom-1"].scale.x = roundTo(params.tallDepth / 600, 4);
     nodes["3DGeom-2"].scale.x = roundTo(params.tallDepth / 600, 4);
@@ -596,27 +596,27 @@ export default function ModelLaundry(props) {
     nodes["3DGeom-1"].scale.y = roundTo((params.tallWidth - 30) / 900, 4);
     nodes["3DGeom-3"].scale.y = roundTo(params.tallWidth / 930, 4);
     nodes["3DGeom-9"].scale.y = roundTo((params.tallWidth - 30) / 900, 4);
-    nodes["3DGeom-9"].scale.x = roundTo(params.kicker / 140, 4);
-    nodes["3DGeom-15"].scale.z = roundTo(params.kicker / 140, 4);
-    //nodes["3DGeom-16"].scale.z = roundTo(params.kicker / 140, 4);
+    nodes["3DGeom-9"].scale.x = roundTo(params.kickerHeight / 140, 4);
+    nodes["3DGeom-15"].scale.z = roundTo(params.kickerHeight / 140, 4);
+    //nodes["3DGeom-16"].scale.z = roundTo(params.kickerHeight / 140, 4);
 
     // Apply position transformations with rounding
     nodes["3DGeom-11"].position.y = roundTo(
-      initialData.current["3DGeom-11"].position.y + baseOneOffset,
+      initialData.current["3DGeom-11"].position.y + baseOneWidthOffset,
       2
     );
     nodes["3DGeom-12"].position.x = roundTo(
-      initialData.current["3DGeom-12"].position.x + baseOneOffset,
+      initialData.current["3DGeom-12"].position.x + baseOneWidthOffset,
       2
     );
     nodes["3DGeom-14"].position.y = roundTo(
       initialData.current["3DGeom-14"].position.y +
-        baseOneOffset +
-        baseTwoOffset,
+        baseOneWidthOffset +
+        baseTwoWidthOffset,
       2
     );
     nodes["3DGeom-15"].position.y = roundTo(
-      initialData.current["3DGeom-15"].position.y + baseOneOffset,
+      initialData.current["3DGeom-15"].position.y + baseOneWidthOffset,
       2
     );
 
@@ -629,41 +629,41 @@ export default function ModelLaundry(props) {
       2
     );
     nodes["3DGeom-6"].position.x = roundTo(
-      initialData.current["3DGeom-6"].position.x + topOneOffset,
+      initialData.current["3DGeom-6"].position.x + topOneWidthOffset,
       2
     );
     nodes["3DGeom-18"].position.x = roundTo(
-      initialData.current["3DGeom-18"].position.x + topOneOffset,
+      initialData.current["3DGeom-18"].position.x + topOneWidthOffset,
       2
     );
     nodes["3DGeom-3"].position.x = roundTo(
       initialData.current["3DGeom-3"].position.x +
         tallHeightOffset +
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
     nodes["3DGeom-4"].position.y = roundTo(
       initialData.current["3DGeom-4"].position.y +
         tallHeightOffset +
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
     nodes["3DGeom-5"].position.y = roundTo(
       initialData.current["3DGeom-5"].position.y +
         tallHeightOffset +
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
     // nodes["3DGeom-6"].position.y = roundTo(
     //   initialData.current["3DGeom-6"].position.y -
     //     tallHeightOffset -
-    //     kickerOffset,
+    //     kickerHeightOffset,
     //   2
     // );
     nodes["3DGeom-7"].position.y = roundTo(
       initialData.current["3DGeom-7"].position.y -
         tallHeightOffset -
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
     nodes["3DGeom-8"].position.y = roundTo(
@@ -671,27 +671,27 @@ export default function ModelLaundry(props) {
       2
     );
     nodes["3DGeom-1"].position.z = roundTo(
-      initialData.current["3DGeom-1"].position.z - kickerOffset,
+      initialData.current["3DGeom-1"].position.z - kickerHeightOffset,
       2
     );
     nodes["3DGeom-10"].position.z = roundTo(
-      initialData.current["3DGeom-10"].position.z + kickerOffset,
+      initialData.current["3DGeom-10"].position.z + kickerHeightOffset,
       2
     );
     nodes["3DGeom-11"].position.z = roundTo(
-      initialData.current["3DGeom-11"].position.z + kickerOffset,
+      initialData.current["3DGeom-11"].position.z + kickerHeightOffset,
       2
     );
     nodes["3DGeom-12"].position.y = roundTo(
       initialData.current["3DGeom-12"].position.y +
         baseHeightOffset +
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
     nodes["3DGeom-13"].position.y = roundTo(
       initialData.current["3DGeom-13"].position.y +
         baseHeightOffset +
-        kickerOffset,
+        kickerHeightOffset,
       2
     );
 
@@ -710,13 +710,13 @@ export default function ModelLaundry(props) {
 
     // Combined adjustments
     const combinedScaleZ = roundTo(
-      (params.tallHeight + params.kicker) / 2340,
+      (params.tallHeight + params.kickerHeight) / 2340,
       4
     );
     nodes["3DGeom-2"].scale.z = combinedScaleZ;
     nodes["3DGeom-8"].scale.z = combinedScaleZ;
     nodes["3DGeom-14"].scale.x = roundTo(
-      (params.baseHeight + params.kicker) / 870,
+      (params.baseHeight + params.kickerHeight) / 870,
       4
     );
   });
