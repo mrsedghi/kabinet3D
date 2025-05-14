@@ -18,3 +18,23 @@ body,
 body {
   background: #f0f0f0;
 }
+
+.rmsc .dropdown-container {
+  background-color: inherit !important;
+}
+
+.panel-content {
+  background-color: #191e24 !important;
+}
+
+.rmsc .search input:focus {
+  background-color: inherit !important;
+}
+
+.rmsc .select-item:hover {
+  background-color: inherit !important;
+}
+
+.rmsc .select-item.selected {
+  background-color: #0d0e0f !important;
+}
